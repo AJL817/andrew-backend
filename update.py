@@ -1,46 +1,46 @@
 import subprocess, os
 
 REPO = r"C:\Users\Andrew Lee\andrew-backend"
-hsrc = os.path.join(REPO, "andrew.html")
-htmp = os.path.join(REPO, "andrew.tmp")
 
-with open(hsrc, "r", encoding="utf-8") as f:
-    hc = f.read()
+# ── main.py 패치 ──────────────────────────────────────────────
+msrc = os.path.join(REPO, "main.py")
+mtmp = os.path.join(REPO, "main.tmp")
+with open(msrc, "r", encoding="utf-8") as f:
+    mc = f.read()
 
-# 패널 닫는 부분에 peer 섹션 삽입
-old = "        </div>\n        </div>\n      </div>\n    </div>`;\n\n  // 차트 로드"
-new = """        </div>
-        </div>
-      </div>
-      <!-- 동종 기업 비교 -->
-      <div style="margin-top:16px;">
-        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🏢 동종 기업 비교</div>
-        <div id="peer-table-${s.ticker.replace(/\\./g,'_')}">
-          <div style="color:var(--text3);font-size:11px;">로딩 중...</div>
-        </div>
-      </div>
-    </div>`;
+changes = 0
 
-  // 차트 로드"""
+# 1) yf_get_fundamentals 반환값에 sector 추가
+old1 = '            "shortRatio":     g("shortRatio"),\n        }'
+new1 = '            "shortRatio":     g("shortRatio"),\n            "sector":         info.get("sector",""),\n            "industry":       info.get("industry",""),\n            "shortName":      info.get("shortName",""),\n        }'
+if '"sector":         info.get' not in mc and old1 in mc:
+    mc = mc.replace(old1, new1); changes += 1; print("✅ yf_get_fundamentals sector 추가")
 
-if 'peer-table-${s.ticker' not in hc and old in hc:
-    hc = hc.replace(old, new)
-    print("✅ peer 섹션 HTML 삽입")
-else:
-    print("⚠️ 이미 있거나 패턴 없음")
+# 2) yf_single_quote 반환값에 sector 추가
+old2 = '    return {\n        "symbol":   ticker,\n        "regularMarketPrice": round(price, 2),\n        "regularMarketChangePercent": chg,\n        "currency": currency,\n        "_history": hist,'
+new2 = '    sector   = yf_fund.get("sector","") or merged.get("sector","")\n    industry = yf_fund.get("industry","") or merged.get("industry","")\n    return {\n        "symbol":   ticker,\n        "regularMarketPrice": round(price, 2),\n        "regularMarketChangePercent": chg,\n        "currency": currency,\n        "sector":   sector,\n        "industry": industry,\n        "_history": hist,'
+if '"sector":   sector,' not in mc and old2 in mc:
+    mc = mc.replace(old2, new2); changes += 1; print("✅ yf_single_quote sector 추가")
 
-with open(htmp, "w", encoding="utf-8") as f:
-    f.write(hc)
-os.replace(htmp, hsrc)
-print("✅ andrew.html 저장")
+# 3) screener results.append에 sector 추가
+old3 = '                        "currency":   q.get("currency",""),\n                    })'
+new3 = '                        "currency":   q.get("currency",""),\n                        "sector":     q.get("sector",""),\n                        "industry":   q.get("industry",""),\n                    })'
+if '"sector":     q.get' not in mc and old3 in mc:
+    mc = mc.replace(old3, new3); changes += 1; print("✅ screener results sector 추가")
+
+print(f"총 {changes}개 수정")
+with open(mtmp, "w", encoding="utf-8") as f:
+    f.write(mc)
+os.replace(mtmp, msrc)
 
 for cmd in [
     ["git", "-C", REPO, "add", "-A"],
-    ["git", "-C", REPO, "commit", "-m", "fix: peer comparison HTML section inserted in detail panel"],
+    ["git", "-C", REPO, "commit", "-m", "fix: add sector/industry to screener + peer comparison"],
     ["git", "-C", REPO, "push"],
 ]:
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     out = (r.stdout + r.stderr).strip()
     if out: print(out)
 
-print("\n🚀 완료! 2분 후 종목 클릭해서 하단 동종 기업 비교 테이블 확인해줘요.")
+print("\n🚀 완료! 배포 후 재스크리닝:")
+print("https://andrew-backend-production.up.railway.app/screener/kr?force=true")

@@ -266,6 +266,9 @@ def yf_get_fundamentals(ticker: str) -> dict:
             "revenueGrowth":  g("revenueGrowth"),
             "earningsGrowth": g("earningsGrowth"),
             "shortRatio":     g("shortRatio"),
+            "sector":         info.get("sector",""),
+            "industry":       info.get("industry",""),
+            "shortName":      info.get("shortName",""),
         }
     except Exception as e:
         return {"_yf_error": str(e)}
@@ -376,11 +379,15 @@ async def yf_single_quote(ticker: str, client: httpx.AsyncClient) -> dict:
         for k in ["returnOnEquity", "freeCashflow", "pegRatio", "operatingMargins", "priceToBook", "trailingPE"]
     )
 
+    sector   = yf_fund.get("sector","") or merged.get("sector","")
+    industry = yf_fund.get("industry","") or merged.get("industry","")
     return {
         "symbol":   ticker,
         "regularMarketPrice": round(price, 2),
         "regularMarketChangePercent": chg,
         "currency": currency,
+        "sector":   sector,
+        "industry": industry,
         "_history": hist,
         "_errors":  errors,
         "_source":  "td+yf" if (TD_API_KEY and not td_fund.get("_td_error")) else ("yfinance" if has_deep else "meta_only"),
@@ -847,6 +854,8 @@ async def run_screener(market: str):
                         "beta":       round(beta,2) if beta else None,
                         "mktcap":     q.get("marketCap"),
                         "currency":   q.get("currency",""),
+                        "sector":     q.get("sector",""),
+                        "industry":   q.get("industry",""),
                     })
 
             results.sort(key=lambda x: x["score"], reverse=True)
