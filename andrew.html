@@ -1381,6 +1381,11 @@ function drawCandleChart(canvas, hist) {
 }
 
 function drawScreenerChart(s) {
+  if (!s || !s.history || s.history.length === 0) return;
+  const canvasId = 'chart-' + s.ticker.replace(/\./g, '_');
+  const canvas = document.getElementById(canvasId);
+  if (canvas) drawCandleChart(canvas, s.history);
+}
 
 function drawCandleChart(canvas, hist) {
   const dpr  = window.devicePixelRatio || 1;
