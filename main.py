@@ -1045,7 +1045,8 @@ MARKET_TICKERS = {
     "kospi":"^KS11","kosdaq":"^KQ11",
     "usdkrw":"KRW=X","usdjpy":"JPY=X",
     "us10y":"^TNX","us2y":"^IRX",
-    "gold":"GC=F","wti":"CL=F","copper":"HG=F",
+    "gold":"GC=F","silver":"SI=F","wti":"CL=F","copper":"HG=F",
+    "vix":"^VIX","vkospi":"^VKOSPI",
 }
 
 async def fetch_quote(sym: str, client: httpx.AsyncClient) -> dict:

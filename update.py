@@ -1,70 +1,108 @@
 import subprocess, os
 
 REPO = r"C:\Users\Andrew Lee\andrew-backend"
-src  = os.path.join(REPO, "main.py")
-tmp  = os.path.join(REPO, "main.tmp")
+
+# ── main.py 패치 ──────────────────────────────────────
+src = os.path.join(REPO, "main.py")
+tmp = os.path.join(REPO, "main.tmp")
 
 with open(src, "r", encoding="utf-8") as f:
     content = f.read()
 
-changes = 0
-
-# yf_single_quote 에서 등락률을 히스토리 마지막 두 캔들로 계산
-old = '''        price    = meta.get("regularMarketPrice") or meta.get("previousClose", 0)
-        prev     = meta.get("previousClose") or meta.get("chartPreviousClose", price)
-        _chg     = meta.get("regularMarketChangePercent")
-        chg      = round(_chg if _chg is not None else ((price - prev) / prev * 100 if prev else 0), 2)'''
-
-new = '''        price    = meta.get("regularMarketPrice") or meta.get("previousClose", 0)
-        prev     = meta.get("previousClose") or meta.get("chartPreviousClose", price)
-        _chg     = meta.get("regularMarketChangePercent")
-        chg      = round(_chg if _chg is not None else ((price - prev) / prev * 100 if prev else 0), 2)
-        # Yahoo 등락률이 배당락 조정가 기준으로 틀릴 수 있음
-        # 히스토리 마지막 두 캔들로 재계산해서 검증
-        _chg_override = None'''
+old = '''MARKET_TICKERS = {
+    "sp500":"^GSPC","nasdaq":"^IXIC","dow":"^DJI",
+    "kospi":"^KS11","kosdaq":"^KQ11",
+    "usdkrw":"KRW=X","usdjpy":"JPY=X",
+    "us10y":"^TNX","us2y":"^IRX",
+    "gold":"GC=F","wti":"CL=F","copper":"HG=F",
+}'''
+new = '''MARKET_TICKERS = {
+    "sp500":"^GSPC","nasdaq":"^IXIC","dow":"^DJI",
+    "kospi":"^KS11","kosdaq":"^KQ11",
+    "usdkrw":"KRW=X","usdjpy":"JPY=X",
+    "us10y":"^TNX","us2y":"^IRX",
+    "gold":"GC=F","silver":"SI=F","wti":"CL=F","copper":"HG=F",
+    "vix":"^VIX","vkospi":"^VKOSPI",
+}'''
 
 if old in content:
     content = content.replace(old, new)
-    changes += 1
-    print("✅ yf_single_quote 준비")
-
-# hist 계산 후에 등락률 재계산 로직 추가
-old2 = '''        hist = hist[-7:]
-
-        # v8 meta에 포함된 재무지표 추출'''
-new2 = '''        hist = hist[-7:]
-
-        # 히스토리 마지막 두 캔들로 등락률 재계산 (Yahoo 조정가 오류 방지)
-        if len(hist) >= 2:
-            _today_close = hist[-1]["close"]
-            _prev_close  = hist[-2]["close"]
-            if _prev_close and _prev_close > 0:
-                _chg_hist = round((_today_close - _prev_close) / _prev_close * 100, 2)
-                # Yahoo 값과 히스토리 값 차이가 5% 이상이면 히스토리 값 사용
-                if abs(_chg_hist - chg) > 5:
-                    chg = _chg_hist
-
-        # v8 meta에 포함된 재무지표 추출'''
-
-if old2 in content:
-    content = content.replace(old2, new2)
-    changes += 1
-    print("✅ 등락률 히스토리 검증 로직 추가")
-
-print(f"총 {changes}개 수정")
+    print("✅ MARKET_TICKERS 수정 (VIX, VKOSPI, 은 추가)")
+else:
+    print("⚠️ MARKET_TICKERS 패턴 못 찾음")
 
 with open(tmp, "w", encoding="utf-8") as f:
     f.write(content)
 os.replace(tmp, src)
-print("✅ main.py 저장")
+
+# ── andrew.html 패치 ──────────────────────────────────
+hsrc = os.path.join(REPO, "andrew.html")
+htmp = os.path.join(REPO, "andrew.tmp")
+
+with open(hsrc, "r", encoding="utf-8") as f:
+    hcontent = f.read()
+
+# 1) 대시보드 map 배열에 추가
+old_map = "      ['copper','m-copper','m-copper-c',null,null,','],\r\n    ];"
+new_map = "      ['copper','m-copper','m-copper-c',null,null,','],\r\n      ['silver','m-silver','m-silver-c','tk-silver','tk-silver-chg',','],\r\n      ['vix','m-vix','m-vix-c','tk-vix','tk-vix-chg',''],\r\n      ['vkospi','m-vkospi','m-vkospi-c',null,null,''],\r\n    ];"
+
+if old_map in hcontent:
+    hcontent = hcontent.replace(old_map, new_map)
+    print("✅ JS map 배열 수정")
+
+# 2) 모닝 브리핑 채권&원자재 카드에 은 추가
+old_bonds = '''          <div class="mkt-tile"><div class="mkt-label">금</div><div class="mkt-val" id="mm-gold">—</div><div class="mkt-chg" id="mm-gold-c">—</div></div>
+          <div class="mkt-tile"><div class="mkt-label">WTI</div><div class="mkt-val" id="mm-wti">—</div><div class="mkt-chg" id="mm-wti-c">—</div></div>'''
+new_bonds = '''          <div class="mkt-tile"><div class="mkt-label">금</div><div class="mkt-val" id="mm-gold">—</div><div class="mkt-chg" id="mm-gold-c">—</div></div>
+          <div class="mkt-tile"><div class="mkt-label">은</div><div class="mkt-val" id="mm-silver">—</div><div class="mkt-chg" id="mm-silver-c">—</div></div>
+          <div class="mkt-tile"><div class="mkt-label">WTI</div><div class="mkt-val" id="mm-wti">—</div><div class="mkt-chg" id="mm-wti-c">—</div></div>
+          <div class="mkt-tile"><div class="mkt-label">VIX</div><div class="mkt-val" id="mm-vix">—</div><div class="mkt-chg" id="mm-vix-c">—</div></div>'''
+
+if old_bonds in hcontent:
+    hcontent = hcontent.replace(old_bonds, new_bonds)
+    print("✅ 모닝 채권&원자재 카드 수정")
+
+# 3) 모닝 브리핑 map에 추가
+old_mm = "      ['gold','mm-gold','mm-gold-c'],['wti','mm-wti','mm-wti-c'],"
+new_mm = "      ['gold','mm-gold','mm-gold-c'],['silver','mm-silver','mm-silver-c'],['wti','mm-wti','mm-wti-c'],['vix','mm-vix','mm-vix-c'],"
+
+if old_mm in hcontent:
+    hcontent = hcontent.replace(old_mm, new_mm)
+    print("✅ 모닝 mm-map 수정")
+
+# 4) 대시보드 원자재 섹션에 은 + VIX 타일 추가
+old_dash_gold = '''<div class="mkt-tile"><div class="mkt-label">금</div><div class="mkt-val" id="m-gold">—</div><div class="mkt-chg" id="m-gold-c">—</div></div>'''
+new_dash_gold = '''<div class="mkt-tile"><div class="mkt-label">금</div><div class="mkt-val" id="m-gold">—</div><div class="mkt-chg" id="m-gold-c">—</div></div>
+              <div class="mkt-tile"><div class="mkt-label">은</div><div class="mkt-val" id="m-silver">—</div><div class="mkt-chg" id="m-silver-c">—</div></div>
+              <div class="mkt-tile"><div class="mkt-label">VIX</div><div class="mkt-val" id="m-vix">—</div><div class="mkt-chg" id="m-vix-c">—</div></div>
+              <div class="mkt-tile"><div class="mkt-label">VKOSPI</div><div class="mkt-val" id="m-vkospi">—</div><div class="mkt-chg" id="m-vkospi-c">—</div></div>'''
+
+if old_dash_gold in hcontent:
+    hcontent = hcontent.replace(old_dash_gold, new_dash_gold)
+    print("✅ 대시보드 원자재 섹션 수정")
+
+# 5) 티커바에 은 + VIX 추가
+old_ticker_gold = '''<div class="ticker-item"><span class="ticker-name">금</span><span class="ticker-val" id="tk-gold">—</span><span class="ticker-chg" id="tk-gold-chg">—</span></div>'''
+new_ticker_gold = '''<div class="ticker-item"><span class="ticker-name">금</span><span class="ticker-val" id="tk-gold">—</span><span class="ticker-chg" id="tk-gold-chg">—</span></div>
+    <div class="ticker-item"><span class="ticker-name">은</span><span class="ticker-val" id="tk-silver">—</span><span class="ticker-chg" id="tk-silver-chg">—</span></div>
+    <div class="ticker-item"><span class="ticker-name">VIX</span><span class="ticker-val" id="tk-vix">—</span><span class="ticker-chg" id="tk-vix-chg">—</span></div>'''
+
+if old_ticker_gold in hcontent:
+    hcontent = hcontent.replace(old_ticker_gold, new_ticker_gold)
+    print("✅ 티커바 수정")
+
+with open(htmp, "w", encoding="utf-8") as f:
+    f.write(hcontent)
+os.replace(htmp, hsrc)
+print("✅ andrew.html 저장")
 
 for cmd in [
     ["git", "-C", REPO, "add", "-A"],
-    ["git", "-C", REPO, "commit", "-m", "fix: recalc change_pct from history candles to avoid Yahoo adj-price error"],
+    ["git", "-C", REPO, "commit", "-m", "feat: add VIX, VKOSPI, Silver to market data"],
     ["git", "-C", REPO, "push"],
 ]:
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     out = (r.stdout + r.stderr).strip()
     if out: print(out)
 
-print("\n🚀 배포 완료!")
+print("\n🚀 완료!")

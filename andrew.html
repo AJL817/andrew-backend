@@ -419,7 +419,9 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
           <div class="mkt-tile"><div class="mkt-label">미10년물</div><div class="mkt-val" id="mm-us10y">—</div><div class="mkt-chg" id="mm-us10y-c">—</div></div>
           <div class="mkt-tile"><div class="mkt-label">미2년물</div><div class="mkt-val" id="mm-us2y">—</div><div class="mkt-chg" id="mm-us2y-c">—</div></div>
           <div class="mkt-tile"><div class="mkt-label">금</div><div class="mkt-val" id="mm-gold">—</div><div class="mkt-chg" id="mm-gold-c">—</div></div>
+          <div class="mkt-tile"><div class="mkt-label">은</div><div class="mkt-val" id="mm-silver">—</div><div class="mkt-chg" id="mm-silver-c">—</div></div>
           <div class="mkt-tile"><div class="mkt-label">WTI</div><div class="mkt-val" id="mm-wti">—</div><div class="mkt-chg" id="mm-wti-c">—</div></div>
+          <div class="mkt-tile"><div class="mkt-label">VIX</div><div class="mkt-val" id="mm-vix">—</div><div class="mkt-chg" id="mm-vix-c">—</div></div>
         </div>
       </div>
     </div>
@@ -754,7 +756,7 @@ async function loadMarket() {
       ['sp500','mm-sp500','mm-sp500-c'],['nasdaq','mm-nasdaq','mm-nasdaq-c'],
       ['dow','mm-dow','mm-dow-c'],['usdkrw','mm-usdkrw','mm-usdkrw-c'],
       ['us10y','mm-us10y','mm-us10y-c'],['us2y','mm-us2y','mm-us2y-c'],
-      ['gold','mm-gold','mm-gold-c'],['wti','mm-wti','mm-wti-c'],
+      ['gold','mm-gold','mm-gold-c'],['silver','mm-silver','mm-silver-c'],['wti','mm-wti','mm-wti-c'],['vix','mm-vix','mm-vix-c'],
       ['kospi','cl-kospi','cl-kospi-c'],['kosdaq','cl-kosdaq','cl-kosdaq-c'],
       ['usdkrw','cl-usdkrw','cl-usdkrw-c'],['usdjpy','cl-usdjpy','cl-usdjpy-c'],
     ].forEach(([key, valId, chgId]) => {
