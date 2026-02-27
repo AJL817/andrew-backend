@@ -8,7 +8,7 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 :root {
-  --bg:#0a0b0f; --surface:#12131a; --surface2:#1a1b24; --surface3:#222436;
+  --bg:#0a0b0f; --surface:#12131a; --surface2:#1a1b24;
   --border:#1e2030; --text:#e8e9f0; --dim:#6b7094; --muted:#4a4d6a;
   --accent:#c9a55a; --accent-dim:rgba(201,165,90,0.15);
   --green:#22c55e; --green-dim:rgba(34,197,94,0.12);
@@ -17,38 +17,27 @@
   --orange:#f59e0b; --orange-dim:rgba(245,158,11,0.12);
   --purple:#8b5cf6; --purple-dim:rgba(139,92,246,0.12);
 }
-body { background:var(--bg); color:var(--text); font-family:'Pretendard',-apple-system,sans-serif; display:flex; min-height:100vh; font-size:14px; }
-
-/* 사이드바 */
+body { background:var(--bg); color:var(--text); font-family:-apple-system,sans-serif; display:flex; min-height:100vh; }
 #sidebar { width:220px; min-height:100vh; background:var(--surface); border-right:1px solid var(--border); padding:20px 12px; display:flex; flex-direction:column; position:fixed; top:0; left:0; z-index:100; }
-.logo h1 { font-size:22px; font-weight:800; color:var(--accent); letter-spacing:-0.5px; }
+.logo h1 { font-size:22px; font-weight:800; color:var(--accent); }
 .logo p { font-size:8px; color:var(--muted); letter-spacing:3px; margin-top:2px; }
 .status { display:flex; align-items:center; gap:6px; margin-top:8px; }
-.dot { width:6px; height:6px; border-radius:50%; background:var(--orange); transition:all 0.3s; }
+.dot { width:6px; height:6px; border-radius:50%; background:var(--orange); }
 .dot.on { background:var(--green); box-shadow:0 0 8px rgba(34,197,94,0.5); }
 .dot.off { background:var(--red); }
 nav { display:flex; flex-direction:column; gap:3px; flex:1; margin-top:24px; }
-.nb { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; border:none; cursor:pointer; font-size:13px; font-family:inherit; text-align:left; background:transparent; color:var(--dim); transition:all 0.15s; width:100%; }
-.nb.active,.nb:hover { background:var(--accent-dim); color:var(--accent); font-weight:600; }
-.ni { font-size:14px; width:20px; text-align:center; }
+.nb { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; border:none; cursor:pointer; font-size:13px; font-family:inherit; text-align:left; background:transparent; color:var(--dim); width:100%; }
+.nb.active, .nb:hover { background:var(--accent-dim); color:var(--accent); font-weight:600; }
 .sf { padding:12px 8px; border-top:1px solid var(--border); margin-top:auto; font-size:10px; color:var(--muted); line-height:1.6; }
-
-/* 메인 */
-#main { flex:1; margin-left:220px; display:flex; flex-direction:column; min-height:100vh; }
+#main { flex:1; margin-left:220px; }
 #topbar { height:52px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:0; background:var(--bg); z-index:50; }
-#content { flex:1; padding:24px; }
-
-/* 탭 */
+#content { padding:24px; }
 .tp { display:none; flex-direction:column; gap:20px; }
 .tp.active { display:flex; }
-
-/* 카드 */
 .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; }
 .card-sm { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
-.ct { font-size:11px; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px; }
-
-/* 배지 */
-.badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:5px; font-size:10px; font-weight:700; letter-spacing:0.5px; }
+.ct { font-size:11px; color:var(--muted); margin-bottom:10px; letter-spacing:0.5px; }
+.badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:5px; font-size:10px; font-weight:700; }
 .bh { color:var(--red); background:var(--red-dim); }
 .bm { color:var(--orange); background:var(--orange-dim); }
 .bn { color:var(--muted); background:var(--surface2); }
@@ -56,178 +45,107 @@ nav { display:flex; flex-direction:column; gap:3px; flex:1; margin-top:24px; }
 .ba { color:var(--accent); background:var(--accent-dim); }
 .bg { color:var(--green); background:var(--green-dim); }
 .bp { color:var(--purple); background:var(--purple-dim); }
-
-/* 버튼 */
-.btn { padding:7px 14px; border-radius:8px; border:none; cursor:pointer; font-size:12px; font-weight:600; font-family:inherit; background:var(--surface2); color:var(--dim); transition:all 0.15s; }
-.btn:hover { background:var(--accent-dim); color:var(--accent); }
-.btn-accent { background:var(--accent); color:var(--bg); }
-.btn-accent:hover { background:#d4b06a; }
+.btn { padding:7px 14px; border-radius:8px; border:none; cursor:pointer; font-size:12px; font-weight:600; font-family:inherit; background:var(--surface2); color:var(--dim); }
+.btn-a { background:var(--accent); color:var(--bg); }
 select { background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:7px 12px; font-size:12px; font-family:inherit; cursor:pointer; outline:none; }
-
-/* 필터 */
-.filter-btn { padding:5px 14px; border-radius:20px; border:1px solid var(--border); cursor:pointer; font-size:12px; font-weight:600; font-family:inherit; background:var(--surface); color:var(--dim); transition:all 0.15s; }
+.filter-btn { padding:5px 14px; border-radius:20px; border:1px solid var(--border); cursor:pointer; font-size:12px; font-weight:600; font-family:inherit; background:var(--surface); color:var(--dim); }
 .filter-btn.active { background:var(--accent-dim); color:var(--accent); border-color:var(--accent); }
-
-/* 공시 */
-.di { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:13px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; text-decoration:none; transition:all 0.15s; }
-.di:hover { border-color:var(--accent); transform:translateX(2px); }
-
-/* 스코어바 */
+.di { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:13px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; text-decoration:none; }
+.di:hover { border-color:var(--accent); }
 .sb-wrap { display:flex; align-items:center; gap:8px; }
 .sb-track { flex:1; height:5px; background:var(--border); border-radius:3px; overflow:hidden; }
-.sb-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+.sb-fill { height:100%; border-radius:3px; }
 .sb-num { font-size:12px; font-weight:700; min-width:28px; text-align:right; }
-
-/* 종목 카드 */
-.stock-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; cursor:pointer; transition:all 0.2s; }
-.stock-card:hover, .stock-card.selected { border-color:var(--accent); background:var(--surface2); }
+.stock-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px; cursor:pointer; }
+.stock-card:hover, .stock-card.sel { border-color:var(--accent); background:var(--surface2); }
 .stock-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-
-/* 철학 매칭 */
 .match-bar { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin:6px 0; }
-.match-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--green),var(--accent)); transition:width 0.8s ease; }
-.checklist { display:flex; flex-direction:column; gap:6px; }
-.check-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; }
-.check-item.pass { background:var(--green-dim); }
-.check-item.fail { background:var(--red-dim); }
-.check-item.warn { background:var(--orange-dim); }
-
-/* 매수 비중 게이지 */
-.position-ring { position:relative; display:inline-flex; align-items:center; justify-content:center; }
-
-/* 성공확률 */
+.match-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--green),var(--accent)); }
+.check-item { display:flex; align-items:flex-start; gap:8px; padding:8px 10px; border-radius:8px; }
+.ci-pass { background:var(--green-dim); }
+.ci-fail { background:var(--red-dim); }
 .prob-bar { height:12px; background:var(--border); border-radius:6px; overflow:hidden; margin-top:6px; }
 .prob-fill { height:100%; border-radius:6px; }
-
-/* 차트 컨테이너 */
-.chart-wrap { position:relative; }
-
-/* 스피너 */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
 .spin-wrap { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13px; padding:30px 20px; }
 .spin { width:16px; height:16px; border:2px solid var(--border); border-top:2px solid var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
-
-/* 에러 */
 .err { background:var(--red-dim); border:1px solid rgba(239,68,68,0.3); border-radius:10px; padding:14px; }
-
-/* AI 채팅 */
-#chat-wrap { display:flex; flex-direction:column; height:calc(100vh - 200px); }
-#chat-msgs { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px; margin-bottom:14px; }
+#chat-msgs { max-height:420px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px; margin-bottom:14px; }
 .msg { padding:12px 16px; border-radius:14px; font-size:13px; line-height:1.7; white-space:pre-wrap; max-width:85%; }
-.msg-u { align-self:flex-end; background:var(--accent); color:var(--bg); border-radius:14px 14px 4px 14px; font-weight:500; }
+.msg-u { align-self:flex-end; background:var(--accent); color:var(--bg); border-radius:14px 14px 4px 14px; }
 .msg-a { align-self:flex-start; background:var(--surface2); border:1px solid var(--border); border-radius:14px 14px 14px 4px; }
 .msg-s { background:var(--surface2); font-size:11px; color:var(--dim); max-width:100%; border-radius:8px; }
 .ci { display:flex; gap:8px; padding:12px 16px; background:var(--surface); border-radius:12px; border:1px solid var(--border); }
 .ci input { flex:1; background:transparent; border:none; outline:none; color:var(--text); font-size:13px; font-family:inherit; }
-
-/* 그리드 */
-.g2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-.g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-
-/* 투자 일지 */
-.journal-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
-.journal-card:hover { border-color:var(--border); }
-
-/* 상세 패널 */
-#detail-panel { display:none; }
-#detail-panel.open { display:block; }
-
-/* 반응형 테이블 */
-.tbl-wrap { overflow-x:auto; border-radius:12px; border:1px solid var(--border); }
-table { width:100%; border-collapse:collapse; }
-th { padding:11px 14px; font-size:10px; font-weight:600; color:var(--muted); text-align:left; letter-spacing:0.5px; border-bottom:1px solid var(--border); background:var(--surface); white-space:nowrap; }
-td { padding:11px 14px; border-bottom:1px solid var(--border); font-size:13px; background:var(--surface); }
-tr:last-child td { border-bottom:none; }
-tr:hover td { background:var(--surface2); }
-
-/* 숫자 강조 */
-.num-up { color:var(--green); font-weight:600; }
-.num-dn { color:var(--red); font-weight:600; }
-.num-neutral { color:var(--orange); font-weight:600; }
-
-/* 헤더 섹션 */
-.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
-.section-title { font-size:17px; font-weight:700; }
-.section-sub { font-size:11px; color:var(--muted); margin-top:3px; }
+.step-item { display:flex; gap:12px; align-items:flex-start; padding:12px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px; }
+.step-num { min-width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; flex-shrink:0; }
+.no-item { padding:12px 14px; border-radius:10px; }
+.quote-item { padding:12px 16px; background:var(--surface2); border-radius:8px; border-left:3px solid var(--accent); }
+.bias-item { display:flex; align-items:flex-start; gap:12px; padding:12px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px; }
 </style>
 </head>
 <body>
-
-<!-- 사이드바 -->
 <div id="sidebar">
   <div class="logo">
     <h1>ANDREW</h1>
     <p>INVESTMENT SYSTEM v2</p>
     <div class="status">
       <div class="dot" id="dot"></div>
-      <span style="font-size:10px;color:var(--muted);" id="stxt">확인중...</span>
+      <span style="font-size:10px;color:var(--muted)" id="stxt">확인중...</span>
     </div>
   </div>
   <nav>
-    <button class="nb active" onclick="go('dash')" id="nav-dash"><span class="ni">◉</span>대시보드</button>
-    <button class="nb" onclick="go('kr')" id="nav-kr"><span class="ni">🇰🇷</span>국장 분석</button>
-    <button class="nb" onclick="go('us')" id="nav-us"><span class="ni">🇺🇸</span>미장 분석</button>
-    <button class="nb" onclick="go('bonds')" id="nav-bonds"><span class="ni">◆</span>채권·원자재</button>
-    <button class="nb" onclick="go('journal')" id="nav-journal"><span class="ni">✎</span>투자 일지</button>
-    <button class="nb" onclick="go('ai')" id="nav-ai"><span class="ni">⬡</span>AI 분석</button>
-    <button class="nb" onclick="go('phil')" id="nav-phil"><span class="ni">📖</span>투자 철학</button>
+    <button class="nb active" onclick="go('dash')" id="nav-dash"><span style="width:20px;text-align:center">◉</span>대시보드</button>
+    <button class="nb" onclick="go('kr')" id="nav-kr"><span style="width:20px;text-align:center">🇰🇷</span>국장 분석</button>
+    <button class="nb" onclick="go('us')" id="nav-us"><span style="width:20px;text-align:center">🇺🇸</span>미장 분석</button>
+    <button class="nb" onclick="go('bonds')" id="nav-bonds"><span style="width:20px;text-align:center">◆</span>채권·원자재</button>
+    <button class="nb" onclick="go('journal')" id="nav-journal"><span style="width:20px;text-align:center">✎</span>투자 일지</button>
+    <button class="nb" onclick="go('phil')" id="nav-phil"><span style="width:20px;text-align:center">📖</span>투자 철학</button>
+    <button class="nb" onclick="go('ai')" id="nav-ai"><span style="width:20px;text-align:center">⬡</span>AI 분석</button>
   </nav>
-  <div class="sf">
-    Draft 3.0 투자 철학<br>
-    DART 실시간 · KIS · AlphaVantage
-  </div>
+  <div class="sf">Draft 3.0 투자 철학<br>DART 실시간 · KIS · AlphaVantage</div>
 </div>
 
-<!-- 메인 -->
 <div id="main">
   <div id="topbar">
-    <span id="dateStr" style="font-size:12px;color:var(--dim);"></span>
-    <div style="display:flex;align-items:center;gap:16px;">
-      <span style="font-size:11px;color:var(--muted);" id="timeStr"></span>
-    </div>
+    <span id="dateStr" style="font-size:12px;color:var(--dim)"></span>
+    <span id="timeStr" style="font-size:12px;color:var(--muted)"></span>
   </div>
-
   <div id="content">
 
-    <!-- ── 대시보드 ── -->
+    <!-- 대시보드 -->
     <div class="tp active" id="tab-dash">
-      <div class="section-header">
+      <div style="display:flex;align-items:center;justify-content:space-between">
         <div>
-          <div class="section-title">📋 DART 전자공시 실시간</div>
-          <div class="section-sub" id="lastUpd">불러오는 중...</div>
+          <div style="font-size:17px;font-weight:700">📋 DART 전자공시 실시간</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px" id="lastUpd">불러오는 중...</div>
         </div>
-        <div style="display:flex;gap:8px;">
+        <div style="display:flex;gap:8px">
           <select id="daysSel" onchange="fetchDart()">
             <option value="3">최근 3일</option>
             <option value="7" selected>최근 7일</option>
             <option value="14">최근 14일</option>
             <option value="30">최근 30일</option>
           </select>
-          <button class="btn btn-accent" onclick="fetchDart()">🔄 새로고침</button>
+          <button class="btn btn-a" onclick="fetchDart()">🔄 새로고침</button>
         </div>
       </div>
-
-      <!-- 마켓 요약 -->
       <div class="g4">
-        <div class="card-sm"><div class="ct">KOSPI</div><div style="font-size:20px;font-weight:700;">2,634</div><div class="num-up">+1.2%</div></div>
-        <div class="card-sm"><div class="ct">S&P 500</div><div style="font-size:20px;font-weight:700;">6,012</div><div class="num-dn">-0.3%</div></div>
-        <div class="card-sm"><div class="ct">원/달러</div><div style="font-size:20px;font-weight:700;">1,342</div><div class="num-up">+0.1%</div></div>
-        <div class="card-sm"><div class="ct">VIX</div><div style="font-size:20px;font-weight:700;">14.2</div><div style="font-size:12px;color:var(--orange);">낮음 → 경계</div></div>
+        <div class="card-sm"><div class="ct">KOSPI</div><div style="font-size:20px;font-weight:700">2,634</div><div style="color:var(--green);font-size:12px;font-weight:600">+1.2%</div></div>
+        <div class="card-sm"><div class="ct">S&P 500</div><div style="font-size:20px;font-weight:700">6,012</div><div style="color:var(--red);font-size:12px;font-weight:600">-0.3%</div></div>
+        <div class="card-sm"><div class="ct">원/달러</div><div style="font-size:20px;font-weight:700">1,342</div><div style="color:var(--green);font-size:12px;font-weight:600">+0.1%</div></div>
+        <div class="card-sm"><div class="ct">VIX</div><div style="font-size:20px;font-weight:700">14.2</div><div style="color:var(--orange);font-size:12px">낮음 → 경계</div></div>
       </div>
-
-      <!-- 필터 -->
-      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="cFilters"></div>
-
-      <!-- 공시 목록 -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="cFilters"></div>
       <div id="dartBox"></div>
-
-      <!-- 하단 카드 -->
       <div class="g2">
         <div class="card">
           <div class="ct">공포 & 탐욕 지수</div>
           <canvas id="gaugeC" width="220" height="120"></canvas>
-          <p style="font-size:11px;color:var(--dim);text-align:center;margin-top:6px;font-style:italic;">"지금은 공포 구간 — 하워드 막스 매수 신호"</p>
+          <p style="font-size:11px;color:var(--dim);text-align:center;margin-top:6px;font-style:italic">"지금은 공포 구간 — 하워드 막스 매수 신호"</p>
         </div>
         <div class="card">
           <div class="ct">포트폴리오 현황</div>
@@ -236,202 +154,188 @@ tr:hover td { background:var(--surface2); }
       </div>
     </div>
 
-    <!-- ── 국장 분석 ── -->
+    <!-- 국장 -->
     <div class="tp" id="tab-kr">
-      <div class="section-header">
-        <div>
-          <div class="section-title">🇰🇷 국장 스크리너 — Draft 3.0 기준</div>
-          <div class="section-sub">ROE ≥ 15% · PBR 업종 이하 · 해자 · 코리아 디스카운트 필터 · BB 타이밍</div>
-        </div>
+      <div>
+        <div style="font-size:17px;font-weight:700">🇰🇷 국장 스크리너 — Draft 3.0</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">ROE ≥ 15% · PBR 업종 이하 · 해자 · 코리아 디스카운트 필터 · BB 타이밍</div>
       </div>
-
-      <!-- 종목 카드 그리드 -->
       <div class="stock-grid" id="krCards"></div>
-
-      <!-- 상세 분석 패널 -->
-      <div id="kr-detail" class="card" style="display:none;">
-        <div id="kr-detail-content"></div>
-      </div>
+      <div id="kr-detail" style="display:none" class="card"><div id="kr-detail-content"></div></div>
     </div>
 
-    <!-- ── 미장 분석 ── -->
+    <!-- 미장 -->
     <div class="tp" id="tab-us">
-      <div class="section-header">
-        <div>
-          <div class="section-title">🇺🇸 미장 스크리너 — 우량 성장주</div>
-          <div class="section-sub">ROIC > WACC · PEG · 해자 강도 · 10년 성장 구조 · 환율 인식</div>
-        </div>
+      <div>
+        <div style="font-size:17px;font-weight:700">🇺🇸 미장 스크리너 — 우량 성장주</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">ROIC > WACC · PEG · 해자 강도 · 10년 성장 구조 · 환율 인식</div>
       </div>
       <div class="stock-grid" id="usCards"></div>
-      <div id="us-detail" class="card" style="display:none;">
-        <div id="us-detail-content"></div>
-      </div>
+      <div id="us-detail" style="display:none" class="card"><div id="us-detail-content"></div></div>
     </div>
 
-    <!-- ── 채권·원자재 ── -->
+    <!-- 채권 -->
     <div class="tp" id="tab-bonds">
-      <div class="section-title" style="margin-bottom:4px;">◆ 채권 · 원자재 — 매크로 사이클</div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px">◆ 채권 · 원자재 — 매크로 사이클</div>
       <div id="bondsBox"></div>
     </div>
 
-    <!-- ── 투자 일지 ── -->
+    <!-- 투자 일지 -->
     <div class="tp" id="tab-journal">
-      <div class="section-header">
-        <div class="section-title">✎ 투자 일지</div>
-        <button class="btn btn-accent">+ 새 기록</button>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:17px;font-weight:700">✎ 투자 일지</div>
+        <button class="btn btn-a">+ 새 기록</button>
       </div>
       <div id="journalBox"></div>
     </div>
 
-    <!-- ── 투자 철학 ── -->
+    <!-- 투자 철학 -->
     <div class="tp" id="tab-phil">
-      <div class="section-title" style="margin-bottom:4px;">📖 Draft 3.0 투자 철학</div>
-      <div class="section-sub" style="margin-bottom:20px;">버핏 가치투자 × 하워드 막스 사이클 × 카너먼 행동경제학</div>
+      <div>
+        <div style="font-size:17px;font-weight:700">📖 Draft 3.0 투자 철학</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">버핏 가치투자 × 하워드 막스 사이클 × 카너먼 행동경제학</div>
+      </div>
 
-      <!-- 핵심 원칙 3줄 요약 -->
+      <!-- 3대 철학 -->
       <div class="g3">
-        <div class="card" style="border-left:3px solid var(--accent);">
-          <div style="font-size:22px;margin-bottom:8px;">🏰</div>
-          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px;">워런 버핏</div>
-          <div style="font-size:12px;color:var(--dim);line-height:1.7;">좋은 기업을 적정가에. ROE·해자·장기보유. 이해하지 못하는 기업은 투자하지 않는다.</div>
+        <div class="card" style="border-left:3px solid var(--accent)">
+          <div style="font-size:24px;margin-bottom:8px">🏰</div>
+          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px">워런 버핏</div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.7">좋은 기업을 적정가에. ROE·해자·장기보유. 이해하지 못하는 기업은 투자하지 않는다.</div>
         </div>
-        <div class="card" style="border-left:3px solid var(--blue);">
-          <div style="font-size:22px;margin-bottom:8px;">🌊</div>
-          <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:6px;">하워드 막스</div>
-          <div style="font-size:12px;color:var(--dim);line-height:1.7;">사이클을 인식하라. 공포일 때 사고 탐욕일 때 팔아라. 리스크는 수익률이 아니라 손실 가능성이다.</div>
+        <div class="card" style="border-left:3px solid var(--blue)">
+          <div style="font-size:24px;margin-bottom:8px">🌊</div>
+          <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:6px">하워드 막스</div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.7">사이클을 인식하라. 공포일 때 사고 탐욕일 때 팔아라. 리스크는 수익률이 아니라 손실 가능성이다.</div>
         </div>
-        <div class="card" style="border-left:3px solid var(--purple);">
-          <div style="font-size:22px;margin-bottom:8px;">🧠</div>
-          <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px;">다니엘 카너먼</div>
-          <div style="font-size:12px;color:var(--dim);line-height:1.7;">내 판단은 항상 편향되어 있다. 매수 전 반드시 반론을 먼저 써라. 시스템 2로 결정하라.</div>
+        <div class="card" style="border-left:3px solid var(--purple)">
+          <div style="font-size:24px;margin-bottom:8px">🧠</div>
+          <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px">다니엘 카너먼</div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.7">내 판단은 항상 편향되어 있다. 매수 전 반드시 반론을 먼저 써라. 시스템 2로 결정하라.</div>
         </div>
       </div>
 
       <!-- 국장 vs 미장 기준 -->
       <div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🇰🇷 국장 vs 🇺🇸 미장 — 각각의 투자 기준</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px">🇰🇷 국장 vs 🇺🇸 미장 — 투자 기준</div>
         <div class="g2">
           <div class="card">
-            <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:14px;">🇰🇷 국장 기준</div>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              ${[
-                {num:"1",title:"기업 퀄리티",desc:"ROE ≥ 15% (지속 가능), 명확한 경제적 해자 (원가우위·전환비용·네트워크), 부채비율 60% 이하"},
-                {num:"2",title:"코리아 디스카운트 필터",desc:"저평가 원인 분류: ① 일시적 악재(매수 대상) ② 구조적 문제(제외) ③ 지배구조 문제(제외)"},
-                {num:"3",title:"가격 필터",desc:"PBR 업종 평균 이하, EV/EBIT 10x 이하, 역사적 저점 근처"},
-                {num:"4",title:"매크로 인식",desc:"금리 사이클 확인, 공포·탐욕 지수 30 이하에서 집중 매수"},
-                {num:"5",title:"볼린저 밴드 타이밍",desc:"BB 하단 접근 or Squeeze 후 방향 확인 시 진입. 상단 접근 시 비중 축소"},
-              ].map(s=>`
-                <div style="display:flex;gap:10px;align-items:flex-start;">
-                  <span style="min-width:22px;height:22px;background:var(--blue-dim);color:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${s.num}</span>
-                  <div><div style="font-size:12px;font-weight:600;color:var(--text);">${s.title}</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5;">${s.desc}</div></div>
-                </div>`).join("")}
+            <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:14px">🇰🇷 국장 5단계 기준</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--blue-dim);color:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</span>
+                <div><div style="font-size:12px;font-weight:600">기업 퀄리티</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">ROE ≥ 15%, 명확한 해자(원가우위·전환비용·네트워크), 부채비율 60% 이하</div></div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--blue-dim);color:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</span>
+                <div><div style="font-size:12px;font-weight:600">코리아 디스카운트 필터</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">① 일시적 악재(매수 대상) ② 구조적 문제(제외) ③ 지배구조 문제(제외)</div></div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--blue-dim);color:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</span>
+                <div><div style="font-size:12px;font-weight:600">가격 필터</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">PBR 업종 평균 이하, EV/EBIT 10x 이하, 역사적 저점 근처</div></div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--blue-dim);color:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">4</span>
+                <div><div style="font-size:12px;font-weight:600">매크로 인식</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">금리 사이클 확인, 공포·탐욕 지수 30 이하에서 집중 매수</div></div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--blue-dim);color:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">5</span>
+                <div><div style="font-size:12px;font-weight:600">볼린저 밴드 타이밍</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">BB 하단 접근 or Squeeze 후 방향 확인 시 진입. 상단 접근 시 비중 축소</div></div>
+              </div>
             </div>
           </div>
           <div class="card">
-            <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:14px;">🇺🇸 미장 기준</div>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              ${[
-                {num:"1",title:"ROIC > WACC",desc:"ROIC 30% 이상. 자본을 효율적으로 사용해 지속적 초과수익 창출 능력"},
-                {num:"2",title:"해자 강도",desc:"브랜드·네트워크·전환비용·원가우위 중 2개 이상. 10년 후에도 해자가 유지될 수 있는가"},
-                {num:"3",title:"PEG & 성장",desc:"PEG ≤ 2.0. 성장률 대비 밸류에이션 합리적. 장기 성장 구조(10년 테마) 확인"},
-                {num:"4",title:"환율 원칙",desc:"원/달러 높을 때(1,300↑) 환전 비중 축소. 낮을 때(1,200↓) 환전 확대. 환율도 수익률"},
-                {num:"5",title:"분산 & 보유기간",desc:"개별 종목 최대 15%. 최소 3~5년 보유 전제. 단기 변동성에 팔지 않는다"},
-              ].map(s=>`
-                <div style="display:flex;gap:10px;align-items:flex-start;">
-                  <span style="min-width:22px;height:22px;background:var(--green-dim);color:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${s.num}</span>
-                  <div><div style="font-size:12px;font-weight:600;color:var(--text);">${s.title}</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5;">${s.desc}</div></div>
-                </div>`).join("")}
+            <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:14px">🇺🇸 미장 5단계 기준</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--green-dim);color:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</span>
+                <div><div style="font-size:12px;font-weight:600">ROIC > WACC</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">ROIC 30% 이상. 자본을 효율적으로 사용해 지속적 초과수익 창출</div></div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--green-dim);color:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</span>
+                <div><div style="font-size:12px;font-weight:600">해자 강도</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">브랜드·네트워크·전환비용·원가우위 중 2개 이상. 10년 후에도 유지 가능한가</div></div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--green-dim);color:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</span>
+                <div><div style="font-size:12px;font-weight:600">PEG & 성장</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">PEG ≤ 2.0. 성장률 대비 밸류에이션 합리적. 장기 성장 구조(10년 테마) 확인</div></div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--green-dim);color:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">4</span>
+                <div><div style="font-size:12px;font-weight:600">환율 원칙</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">원/달러 높을 때(1,300↑) 환전 축소. 낮을 때(1,200↓) 환전 확대. 환율도 수익률</div></div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <span style="min-width:22px;height:22px;background:var(--green-dim);color:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">5</span>
+                <div><div style="font-size:12px;font-weight:600">분산 & 보유기간</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5">개별 종목 최대 15%. 최소 3~5년 보유 전제. 단기 변동성에 팔지 않는다</div></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 8단계 의사결정 프레임워크 -->
+      <!-- 8단계 의사결정 -->
       <div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">⚙️ 매수 전 8단계 의사결정 프레임워크</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          ${[
-            {n:"1",title:"기업 이해",q:"이 기업이 어떻게 돈을 버는지 10초 안에 설명할 수 있는가?",color:"var(--accent)"},
-            {n:"2",title:"해자 확인",q:"5년 후에도 이 경쟁우위가 유지될 것인가? 위협 요인은 무엇인가?",color:"var(--accent)"},
-            {n:"3",title:"재무 퀄리티",q:"ROE(국장 ≥15%) / ROIC(미장 ≥30%) 기준 충족? 부채는 감당 가능한가?",color:"var(--blue)"},
-            {n:"4",title:"저평가 원인",q:"왜 지금 저평가인가? 일시적 악재인가, 구조적 문제인가?",color:"var(--blue)"},
-            {n:"5",title:"안전마진",q:"현재 가격에서 충분한 안전마진이 있는가? (최소 20~30% 업사이드)",color:"var(--green)"},
-            {n:"6",title:"매크로 체크",q:"현재 금리·사이클·공포탐욕지수 고려 시 지금이 매수 적기인가?",color:"var(--green)"},
-            {n:"7",title:"반론 작성",q:"내가 왜 틀릴 수 있는가? 반론 3가지를 먼저 써라. 반론이 치명적이면 투자 금지.",color:"var(--orange)"},
-            {n:"8",title:"포지션 사이징",q:"확신 정도에 따라 비중 결정 (3~15%). 한 종목 최대 15% 초과 금지.",color:"var(--purple)"},
-          ].map(s=>`
-            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
-              <span style="min-width:28px;height:28px;background:${s.color};opacity:0.15;color:var(--text);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;filter:brightness(4);">${s.n}</span>
-              <div style="display:flex;flex-direction:column;gap:2px;">
-                <div style="font-size:12px;font-weight:700;color:${s.color};">${s.n}단계 — ${s.title}</div>
-                <div style="font-size:12px;color:var(--dim);line-height:1.5;">${s.q}</div>
-              </div>
-            </div>`).join("")}
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px">⚙️ 매수 전 8단계 의사결정 프레임워크</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="step-item"><div class="step-num" style="background:var(--accent-dim);color:var(--accent)">1</div><div><div style="font-size:12px;font-weight:700;color:var(--accent)">1단계 — 기업 이해</div><div style="font-size:12px;color:var(--dim);margin-top:2px;line-height:1.5">이 기업이 어떻게 돈을 버는지 10초 안에 설명할 수 있는가?</div></div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--accent-dim);color:var(--accent)">2</div><div><div style="font-size:12px;font-weight:700;color:var(--accent)">2단계 — 해자 확인</div><div style="font-size:12px;color:var(--dim);margin-top:2px;line-height:1.5">5년 후에도 이 경쟁우위가 유지될 것인가? 위협 요인은 무엇인가?</div></div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--blue-dim);color:var(--blue)">3</div><div><div style="font-size:12px;font-weight:700;color:var(--blue)">3단계 — 재무 퀄리티</div><div style="font-size:12px;color:var(--dim);margin-top:2px;line-height:1.5">ROE(국장 ≥15%) / ROIC(미장 ≥30%) 기준 충족? 부채는 감당 가능한가?</div></div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--blue-dim);color:var(--blue)">4</div><div><div style="font-size:12px;font-weight:700;color:var(--blue)">4단계 — 저평가 원인</div><div style="font-size:12px;color:var(--dim);margin-top:2px;line-height:1.5">왜 지금 저평가인가? 일시적 악재인가, 구조적 문제인가?</div></div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--green-dim);color:var(--green)">5</div><div><div style="font-size:12px;font-weight:700;color:var(--green)">5단계 — 안전마진</div><div style="font-size:12px;color:var(--dim);margin-top:2px;line-height:1.5">현재 가격에서 충분한 안전마진이 있는가? (최소 20~30% 업사이드)</div></div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--green-dim);color:var(--green)">6</div><div><div style="font-size:12px;font-weight:700;color:var(--green)">6단계 — 매크로 체크</div><div style="font-size:12px;color:var(--dim);margin-top:2px;line-height:1.5">현재 금리·사이클·공포탐욕지수 고려 시 지금이 매수 적기인가?</div></div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--orange-dim);color:var(--orange)">7</div><div><div style="font-size:12px;font-weight:700;color:var(--orange)">7단계 — 반론 작성 (필수)</div><div style="font-size:12px;color:var(--dim);margin-top:2px;line-height:1.5">내가 왜 틀릴 수 있는가? 반론 3가지를 먼저 써라. 반론이 치명적이면 투자 금지.</div></div></div>
+          <div class="step-item"><div class="step-num" style="background:var(--purple-dim);color:var(--purple)">8</div><div><div style="font-size:12px;font-weight:700;color:var(--purple)">8단계 — 포지션 사이징</div><div style="font-size:12px;color:var(--dim);margin-top:2px;line-height:1.5">확신 정도에 따라 비중 결정 (3~15%). 한 종목 최대 15% 초과 금지.</div></div></div>
         </div>
       </div>
 
       <!-- 금지 원칙 -->
       <div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🚫 절대 하지 말아야 할 것 — 금지 원칙</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          ${[
-            {icon:"❌",title:"이해 못한 기업 투자",desc:"유튜브·리딩방 추천만 보고 투자. 기업의 수익 구조를 모른 채 매수."},
-            {icon:"❌",title:"몰빵",desc:"한 종목 15% 초과 금지. 확신이 강해도 포지션 한도 준수."},
-            {icon:"❌",title:"손실 평균 매수 (무지성)",desc:"구조적 문제가 있는 종목에 물타기. 하락 이유를 먼저 분석할 것."},
-            {icon:"❌",title:"뉴스·단기 감정 매매",desc:"공시 직후 감정적 즉각 매수/매도. 최소 24시간 냉각 후 결정."},
-            {icon:"❌",title:"목표가 없는 매수",desc:"언제 팔지 모른 채 사는 것. 매수 전 목표가·손절가 반드시 설정."},
-            {icon:"❌",title:"사이클 무시",desc:"탐욕 구간(VIX 낮음·고점 근처)에서 신규 대량 진입."},
-            {icon:"❌",title:"확증 편향 조사",desc:"매수 결정 후 내 의견을 지지하는 자료만 찾는 것. 반론 먼저."},
-            {icon:"❌",title:"레버리지·빚투",desc:"대출·신용으로 주식 매수 절대 금지. 수면을 방해하는 포지션은 틀린 포지션."},
-          ].map(s=>`
-            <div style="padding:12px 14px;background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);border-radius:10px;">
-              <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px;">${s.icon} ${s.title}</div>
-              <div style="font-size:11px;color:var(--dim);line-height:1.5;">${s.desc}</div>
-            </div>`).join("")}
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px">🚫 절대 하지 말아야 할 것</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="no-item" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2)"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">❌ 이해 못한 기업 투자</div><div style="font-size:11px;color:var(--dim);line-height:1.5">유튜브·리딩방 추천만 보고 투자. 기업의 수익 구조를 모른 채 매수.</div></div>
+          <div class="no-item" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2)"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">❌ 몰빵</div><div style="font-size:11px;color:var(--dim);line-height:1.5">한 종목 15% 초과 금지. 확신이 강해도 포지션 한도 준수.</div></div>
+          <div class="no-item" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2)"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">❌ 무지성 물타기</div><div style="font-size:11px;color:var(--dim);line-height:1.5">구조적 문제가 있는 종목에 물타기. 하락 이유를 먼저 분석할 것.</div></div>
+          <div class="no-item" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2)"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">❌ 감정적 즉각 매매</div><div style="font-size:11px;color:var(--dim);line-height:1.5">공시 직후 감정적 즉각 매수/매도. 최소 24시간 냉각 후 결정.</div></div>
+          <div class="no-item" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2)"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">❌ 목표가 없는 매수</div><div style="font-size:11px;color:var(--dim);line-height:1.5">언제 팔지 모른 채 사는 것. 매수 전 목표가·손절가 반드시 설정.</div></div>
+          <div class="no-item" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2)"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">❌ 탐욕 구간 신규 진입</div><div style="font-size:11px;color:var(--dim);line-height:1.5">VIX 낮고 고점 근처일 때 신규 대량 진입 금지.</div></div>
+          <div class="no-item" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2)"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">❌ 확증 편향 조사</div><div style="font-size:11px;color:var(--dim);line-height:1.5">매수 결정 후 내 의견을 지지하는 자료만 찾는 것. 반론 먼저.</div></div>
+          <div class="no-item" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2)"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px">❌ 레버리지·빚투</div><div style="font-size:11px;color:var(--dim);line-height:1.5">대출·신용으로 주식 매수 절대 금지. 수면을 방해하는 포지션은 틀린 포지션.</div></div>
         </div>
       </div>
 
-      <!-- 행동경제학 바이어스 체크리스트 -->
+      <!-- 바이어스 체크리스트 -->
       <div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🧠 매수 전 바이어스 체크리스트</div>
-        <div style="font-size:12px;color:var(--dim);margin-bottom:12px;">매수 버튼 누르기 전 아래 질문에 솔직하게 답해보세요.</div>
-        <div style="display:flex;flex-direction:column;gap:8px;" id="biasChecklist"></div>
-        <div style="margin-top:14px;padding:12px 16px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--accent);">
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">체크리스트 결과</div>
-          <div style="font-size:12px;color:var(--dim);" id="biasResult">체크박스를 선택하면 결과가 나옵니다.</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:6px">🧠 매수 전 바이어스 체크리스트</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:12px">매수 버튼 누르기 전 아래 질문에 솔직하게 답해보세요.</div>
+        <div style="display:flex;flex-direction:column;gap:8px" id="biasBox"></div>
+        <div style="margin-top:14px;padding:12px 16px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--accent)">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px">체크리스트 결과</div>
+          <div style="font-size:12px;color:var(--dim)" id="biasResult">체크박스를 선택하면 결과가 나옵니다.</div>
         </div>
       </div>
 
-      <!-- 명언 모음 -->
+      <!-- 명언 -->
       <div class="card">
-        <div style="font-size:14px;font-weight:700;margin-bottom:14px;">💬 투자 결정 전 읽는 명언</div>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          ${[
-            {quote:"남들이 탐욕스러울 때 두려워하고, 남들이 두려워할 때 탐욕스러워져라.",who:"워런 버핏"},
-            {quote:"투자에서 가장 위험한 말은 '이번엔 다르다'이다.",who:"존 템플턴"},
-            {quote:"리스크는 자신이 무엇을 하는지 모를 때 발생한다.",who:"워런 버핏"},
-            {quote:"시장은 단기적으로 투표 기계이고, 장기적으로 저울이다.",who:"벤저민 그레이엄"},
-            {quote:"가장 중요한 투자는 자기 자신에 대한 투자다.",who:"워런 버핏"},
-            {quote:"성공한 투자자는 모든 결정에서 반론을 먼저 쓴다.",who:"Draft 3.0"},
-          ].map(q=>`
-            <div style="padding:12px 16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--accent);">
-              <div style="font-size:13px;color:var(--text);font-style:italic;line-height:1.6;">"${q.quote}"</div>
-              <div style="font-size:10px;color:var(--muted);margin-top:6px;">— ${q.who}</div>
-            </div>`).join("")}
+        <div style="font-size:14px;font-weight:700;margin-bottom:14px">💬 투자 결정 전 읽는 명언</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="quote-item"><div style="font-size:13px;color:var(--text);font-style:italic;line-height:1.6">"남들이 탐욕스러울 때 두려워하고, 남들이 두려워할 때 탐욕스러워져라."</div><div style="font-size:10px;color:var(--muted);margin-top:6px">— 워런 버핏</div></div>
+          <div class="quote-item"><div style="font-size:13px;color:var(--text);font-style:italic;line-height:1.6">"투자에서 가장 위험한 말은 '이번엔 다르다'이다."</div><div style="font-size:10px;color:var(--muted);margin-top:6px">— 존 템플턴</div></div>
+          <div class="quote-item"><div style="font-size:13px;color:var(--text);font-style:italic;line-height:1.6">"리스크는 자신이 무엇을 하는지 모를 때 발생한다."</div><div style="font-size:10px;color:var(--muted);margin-top:6px">— 워런 버핏</div></div>
+          <div class="quote-item"><div style="font-size:13px;color:var(--text);font-style:italic;line-height:1.6">"시장은 단기적으로 투표 기계이고, 장기적으로 저울이다."</div><div style="font-size:10px;color:var(--muted);margin-top:6px">— 벤저민 그레이엄</div></div>
+          <div class="quote-item"><div style="font-size:13px;color:var(--text);font-style:italic;line-height:1.6">"성공한 투자자는 모든 결정에서 반론을 먼저 쓴다."</div><div style="font-size:10px;color:var(--muted);margin-top:6px">— Draft 3.0</div></div>
         </div>
       </div>
     </div>
 
-    <!-- ── AI 분석 ── -->
+    <!-- AI 분석 -->
     <div class="tp" id="tab-ai">
-      <div class="section-title" style="margin-bottom:16px;">⬡ AI 종목 분석 — Draft 3.0 기반</div>
-      <div class="card" id="chat-wrap">
+      <div style="font-size:17px;font-weight:700;margin-bottom:4px">⬡ AI 종목 분석 — Draft 3.0 기반</div>
+      <div class="card">
         <div id="chat-msgs">
           <div class="msg msg-s">ANDREW AI — 실제 DART 데이터 + Draft 3.0 철학 기반 분석. 종목명, 공시 해석, 매크로 질문을 해보세요.</div>
         </div>
         <div class="ci">
-          <input id="chatIn" placeholder="예: 삼성전자 지금 매수해도 돼? / HBM 관련 수혜주 알려줘" onkeydown="if(event.key==='Enter')sendChat()">
-          <button class="btn btn-accent" onclick="sendChat()">전송</button>
+          <input id="chatIn" placeholder="예: 삼성전자 지금 매수해도 돼? / HBM 수혜주 알려줘" onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="btn btn-a" onclick="sendChat()">전송</button>
         </div>
       </div>
     </div>
@@ -440,784 +344,248 @@ tr:hover td { background:var(--surface2); }
 </div>
 
 <script>
-const BACKEND = "https://andrew-backend-production.up.railway.app";
-let dartData = [], activeFilter = "전체", chatBusy = false;
-let krSelected = null, usSelected = null;
+const BACKEND = "";
+let dartData=[], activeFilter="전체", chatBusy=false, krSel=null, usSel=null;
 
-// ── 시간 ──────────────────────────────────────────────────────
-setInterval(() => {
-  const n = new Date();
-  document.getElementById("dateStr").textContent = n.toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
-  document.getElementById("timeStr").textContent = n.toLocaleTimeString("ko-KR");
+// 시간
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById("dateStr").textContent=n.toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
+  document.getElementById("timeStr").textContent=n.toLocaleTimeString("ko-KR");
 },1000);
 
-// ── 백엔드 상태 ───────────────────────────────────────────────
-async function checkBackend() {
-  try {
-    await fetch(`${BACKEND}/`);
-    document.getElementById("dot").className = "dot on";
-    document.getElementById("stxt").textContent = "백엔드 연결됨";
-  } catch {
-    document.getElementById("dot").className = "dot off";
-    document.getElementById("stxt").textContent = "백엔드 오프라인";
+// 백엔드 상태
+async function checkBE(){
+  try{
+    await fetch(BACKEND+"/");
+    document.getElementById("dot").className="dot on";
+    document.getElementById("stxt").textContent="백엔드 연결됨";
+  }catch{
+    document.getElementById("dot").className="dot off";
+    document.getElementById("stxt").textContent="백엔드 오프라인";
   }
 }
-checkBackend();
+checkBE();
 
-// ── 탭 전환 ───────────────────────────────────────────────────
-function go(id) {
-  document.querySelectorAll(".tp").forEach(p => p.classList.remove("active"));
-  document.querySelectorAll(".nb").forEach(b => b.classList.remove("active"));
+// 탭
+function go(id){
+  document.querySelectorAll(".tp").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nb").forEach(b=>b.classList.remove("active"));
   document.getElementById("tab-"+id).classList.add("active");
   document.getElementById("nav-"+id).classList.add("active");
-  if(id==="dash") { fetchDart(); setTimeout(()=>{ drawGauge(32,"공포"); drawPort(); },100); }
+  if(id==="dash"){fetchDart();setTimeout(()=>{drawGauge(32,"공포");drawPort();},100);}
   if(id==="kr") renderKR();
   if(id==="us") renderUS();
   if(id==="bonds") renderBonds();
-  if(id==="phil") renderBiasChecklist();
+  if(id==="journal") renderJournal();
+  if(id==="phil") renderBias();
 }
 
-// ── 게이지 ────────────────────────────────────────────────────
-function drawGauge(val, label) {
-  const c = document.getElementById("gaugeC"); if(!c) return;
-  const ctx = c.getContext("2d"), cx=110, cy=95, r=72;
+// 게이지
+function drawGauge(val,label){
+  const c=document.getElementById("gaugeC");if(!c)return;
+  const ctx=c.getContext("2d"),cx=110,cy=95,r=72;
   ctx.clearRect(0,0,220,120);
-  const g = ctx.createLinearGradient(cx-r,0,cx+r,0);
-  g.addColorStop(0,"#22c55e"); g.addColorStop(0.5,"#f59e0b"); g.addColorStop(1,"#ef4444");
-  ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI,0); ctx.strokeStyle="#1e2030"; ctx.lineWidth=12; ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI,Math.PI+(val/100)*Math.PI); ctx.strokeStyle=g; ctx.lineWidth=12; ctx.lineCap="round"; ctx.stroke();
-  const ang = Math.PI+(val/100)*Math.PI;
-  const col = val<30?"#22c55e":val<50?"#f59e0b":"#ef4444";
-  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+(r-18)*Math.cos(ang),cy+(r-18)*Math.sin(ang)); ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.lineCap="round"; ctx.stroke();
-  ctx.fillStyle=col; ctx.font="bold 22px sans-serif"; ctx.textAlign="center"; ctx.fillText(val,cx,cy+20);
-  ctx.fillStyle="#6b7094"; ctx.font="11px sans-serif"; ctx.fillText(label,cx,cy+38);
+  const g=ctx.createLinearGradient(cx-r,0,cx+r,0);
+  g.addColorStop(0,"#22c55e");g.addColorStop(0.5,"#f59e0b");g.addColorStop(1,"#ef4444");
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0);ctx.strokeStyle="#1e2030";ctx.lineWidth=12;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,Math.PI+(val/100)*Math.PI);ctx.strokeStyle=g;ctx.lineWidth=12;ctx.lineCap="round";ctx.stroke();
+  const ang=Math.PI+(val/100)*Math.PI,col=val<30?"#22c55e":val<50?"#f59e0b":"#ef4444";
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+(r-18)*Math.cos(ang),cy+(r-18)*Math.sin(ang));ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.lineCap="round";ctx.stroke();
+  ctx.fillStyle=col;ctx.font="bold 22px sans-serif";ctx.textAlign="center";ctx.fillText(val,cx,cy+20);
+  ctx.fillStyle="#6b7094";ctx.font="11px sans-serif";ctx.fillText(label,cx,cy+38);
 }
 
-// ── 포트폴리오 파이 ───────────────────────────────────────────
-let portChart = null;
-function drawPort() {
-  const c = document.getElementById("portC"); if(!c) return;
-  if(portChart) portChart.destroy();
-  portChart = new Chart(c, {
-    type:"doughnut",
-    data:{
-      labels:["국장 42%","미장 38%","현금 20%"],
-      datasets:[{data:[42,38,20],backgroundColor:["#3b82f6","#22c55e","#4a4d6a"],borderWidth:0,hoverOffset:6}]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:"right", labels:{ color:"#6b7094", font:{size:11}, padding:12 } } },
-      cutout:"65%"
-    }
-  });
+// 포트 차트
+let portChart=null;
+function drawPort(){
+  const c=document.getElementById("portC");if(!c)return;
+  if(portChart)portChart.destroy();
+  portChart=new Chart(c,{type:"doughnut",data:{labels:["국장 42%","미장 38%","현금 20%"],datasets:[{data:[42,38,20],backgroundColor:["#3b82f6","#22c55e","#4a4d6a"],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"right",labels:{color:"#6b7094",font:{size:11},padding:12}}},cutout:"65%"}});
 }
 
-// ── DART ─────────────────────────────────────────────────────
-async function fetchDart() {
-  const days = document.getElementById("daysSel").value;
-  document.getElementById("dartBox").innerHTML = '<div class="spin-wrap"><div class="spin"></div>공시 불러오는 중...</div>';
-  try {
-    const r = await fetch(`${BACKEND}/dart/recent?days=${days}`);
-    const json = await r.json();
-    dartData = json.data||[];
-    document.getElementById("lastUpd").textContent = "마지막 업데이트: "+new Date().toLocaleTimeString("ko-KR")+" · "+dartData.length+"건";
-    renderFilters();
-    renderDart();
-    setTimeout(()=>{ drawGauge(32,"공포"); drawPort(); },100);
-  } catch {
-    document.getElementById("dartBox").innerHTML = `<div class="err"><p style="color:var(--red);font-weight:600;">⚠️ 백엔드 연결 실패</p><p style="font-size:11px;color:var(--dim);margin-top:4px;">${BACKEND} 서버 확인</p></div>`;
+// DART
+async function fetchDart(){
+  const days=document.getElementById("daysSel").value;
+  document.getElementById("dartBox").innerHTML='<div class="spin-wrap"><div class="spin"></div>공시 불러오는 중...</div>';
+  try{
+    const r=await fetch(BACKEND+"/dart/recent?days="+days);
+    const j=await r.json();
+    dartData=j.data||[];
+    document.getElementById("lastUpd").textContent="마지막 업데이트: "+new Date().toLocaleTimeString("ko-KR")+" · "+dartData.length+"건";
+    renderFilters();renderDart();
+    setTimeout(()=>{drawGauge(32,"공포");drawPort();},100);
+  }catch{
+    document.getElementById("dartBox").innerHTML='<div class="err"><p style="color:var(--red);font-weight:600">⚠️ 백엔드 연결 실패</p><p style="font-size:11px;color:var(--dim);margin-top:4px">서버 확인: '+BACKEND+'</p></div>';
   }
 }
 
-function renderFilters() {
-  const cos = ["전체",...new Set(dartData.map(d=>d.company))];
-  document.getElementById("cFilters").innerHTML = cos.map(c=>`<button class="filter-btn${c===activeFilter?" active":""}" onclick="setF('${c}')">${c}</button>`).join("");
+function renderFilters(){
+  const cos=["전체",...new Set(dartData.map(d=>d.company))];
+  document.getElementById("cFilters").innerHTML=cos.map(c=>'<button class="filter-btn'+(c===activeFilter?" active":"")+'" onclick="setF(\''+c+'\')">'+c+'</button>').join("");
+}
+function setF(c){activeFilter=c;renderFilters();renderDart();}
+function renderDart(){
+  const fd=activeFilter==="전체"?dartData:dartData.filter(d=>d.company===activeFilter);
+  const fmt=d=>d?d.slice(0,4)+"."+d.slice(4,6)+"."+d.slice(6,8):"";
+  if(!fd.length){document.getElementById("dartBox").innerHTML='<div class="card-sm" style="color:var(--muted)">공시 없음</div>';return;}
+  document.getElementById("dartBox").innerHTML='<p style="font-size:12px;color:var(--muted);margin-bottom:10px">총 <b style="color:var(--accent)">'+fd.length+'건</b></p><div style="display:flex;flex-direction:column;gap:7px">'+fd.map(d=>'<a class="di" href="'+d.url+'" target="_blank"><span class="badge '+(d.type==="high"?"bh":d.type==="mid"?"bm":"bn")+'">'+(d.type==="high"?"🔴 중요":d.type==="mid"?"🟡 주목":"일반")+'</span><span class="badge bb">'+d.company+'</span><span style="flex:1;font-size:13px">'+d.title+'</span><span style="font-size:11px;color:var(--muted)">'+fmt(d.date)+'</span><span style="color:var(--accent);font-size:12px">↗</span></a>').join("")+'</div>';
 }
 
-function setF(c) { activeFilter=c; renderFilters(); renderDart(); }
-
-function renderDart() {
-  const fd = activeFilter==="전체"?dartData:dartData.filter(d=>d.company===activeFilter);
-  const fmt = d => d?`${d.slice(0,4)}.${d.slice(4,6)}.${d.slice(6,8)}`:"";
-  if(!fd.length) { document.getElementById("dartBox").innerHTML='<div class="card-sm" style="color:var(--muted);">공시 없음</div>'; return; }
-  document.getElementById("dartBox").innerHTML = `
-    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">총 <b style="color:var(--accent);">${fd.length}건</b></p>
-    <div style="display:flex;flex-direction:column;gap:7px;">
-    ${fd.map(d=>`
-      <a class="di" href="${d.url}" target="_blank">
-        <span class="badge ${d.type==="high"?"bh":d.type==="mid"?"bm":"bn"}">${d.type==="high"?"🔴 중요":d.type==="mid"?"🟡 주목":"일반"}</span>
-        <span class="badge bb">${d.company}</span>
-        <span style="flex:1;font-size:13px;">${d.title}</span>
-        <span style="font-size:11px;color:var(--muted);">${fmt(d.date)}</span>
-        <span style="color:var(--accent);font-size:12px;">↗</span>
-      </a>`).join("")}
-    </div>`;
-}
-
-// ── 국장 데이터 ───────────────────────────────────────────────
-const KR = [
-  {
-    ticker:"005930", name:"삼성전자", sector:"반도체",
-    roe:18.2, pbr:1.1, evEbit:8.3, debt:32, moat:"원가우위", score:92, bb:"하단접근",
-    discountType:"일시적 악재", discountDetail:"메모리 사이클 우려로 저평가",
-    buyPct:8, successProb:78, targetPrice:82000, currentPrice:65400,
-    philosophy:{
-      quality: { pass:true, label:"퀄리티 ✓", detail:"ROE 18.2% > 15% 기준, 반도체 원가우위 해자" },
-      discount: { pass:true, label:"디스카운트 ✓", detail:"일시적 악재(사이클) → 구조적 문제 아님" },
-      price: { pass:true, label:"가격 ✓", detail:"PBR 1.1x, EV/EBIT 8.3x — 안전마진 확보" },
-      macro: { pass:true, label:"매크로 ✓", detail:"공포 구간(32) — 하워드 막스 매수 신호" },
-      timing: { pass:true, label:"타이밍 ✓", detail:"볼린저 밴드 하단 접근" },
-    },
-    reason:"자사주 매입 + HBM4 양산 전환 기대. 메모리 사이클 저점 + PBR 1.1로 역사적 저평가 구간.",
-    counter:"중국 경쟁사 CXMT 빠른 추격. 메모리 ASP 하락 지속 가능성. CAPEX 부담.",
-    history:[63000,64200,62800,65100,64500,66200,65400],
-    radarData:[90,85,88,75,92],
-  },
-  {
-    ticker:"000660", name:"SK하이닉스", sector:"반도체",
-    roe:22.5, pbr:1.4, evEbit:6.1, debt:45, moat:"전환비용", score:88, bb:"Squeeze",
-    discountType:"사이클 저점", discountDetail:"HBM 독주 체제 저평가",
-    buyPct:7, successProb:74, targetPrice:195000, currentPrice:165000,
-    philosophy:{
-      quality: { pass:true, label:"퀄리티 ✓", detail:"ROE 22.5%, HBM 독점적 지위" },
-      discount: { pass:true, label:"디스카운트 ✓", detail:"메모리 사이클 저점, 구조적 문제 없음" },
-      price: { pass:true, label:"가격 ✓", detail:"EV/EBIT 6.1x — 업종 최저 수준" },
-      macro: { pass:true, label:"매크로 ✓", detail:"AI 서버 수요 급증 구조적 테마" },
-      timing: { pass:false, label:"타이밍 △", detail:"BB Squeeze — 방향성 아직 불명확" },
-    },
-    reason:"NVDA HBM3E 독점 공급. HBM4 양산 확정. AI 서버 수요 구조적 성장.",
-    counter:"TSMC 경쟁 심화. 삼성 HBM 추격. 부채비율 45% 주의.",
-    history:[158000,162000,160000,167000,163000,168000,165000],
-    radarData:[88,82,90,70,75],
-  },
-  {
-    ticker:"006400", name:"삼성SDI", sector:"배터리",
-    roe:14.1, pbr:0.9, evEbit:7.8, debt:38, moat:"전환비용", score:85, bb:"하단접근",
-    discountType:"섹터 센티먼트", discountDetail:"EV 둔화 우려로 과도 하락",
-    buyPct:5, successProb:68, targetPrice:380000, currentPrice:285000,
-    philosophy:{
-      quality: { pass:false, label:"퀄리티 △", detail:"ROE 14.1% — 15% 기준 미달 (근접)" },
-      discount: { pass:true, label:"디스카운트 ✓", detail:"EV 센티먼트 악화 → 일시적" },
-      price: { pass:true, label:"가격 ✓", detail:"PBR 0.9x — 순자산 이하" },
-      macro: { pass:false, label:"매크로 △", detail:"EV 성장 둔화 우려 지속" },
-      timing: { pass:true, label:"타이밍 ✓", detail:"볼린저 밴드 하단 접근" },
-    },
-    reason:"PBR 0.9x 역사적 저점. 전고체 배터리 2027 양산. BMW, 스텔란티스 수주 탄탄.",
-    counter:"EV 수요 회복 시기 불확실. 중국 CATL 가격 경쟁. ROE 15% 미달.",
-    history:[295000,288000,278000,282000,275000,290000,285000],
-    radarData:[75,88,70,65,82],
-  },
-  {
-    ticker:"035420", name:"NAVER", sector:"플랫폼",
-    roe:12.8, pbr:1.6, evEbit:14.2, debt:28, moat:"네트워크", score:74, bb:"중립",
-    discountType:"성장 둔화 우려", discountDetail:"광고 수익 성장 한계",
-    buyPct:3, successProb:55, targetPrice:220000, currentPrice:185000,
-    philosophy:{
-      quality: { pass:false, label:"퀄리티 △", detail:"ROE 12.8% — 기준 미달" },
-      discount: { pass:false, label:"디스카운트 △", detail:"성장 둔화 일시적인지 구조적인지 불명확" },
-      price: { pass:false, label:"가격 △", detail:"EV/EBIT 14.2x — 프리미엄 과다" },
-      macro: { pass:true, label:"매크로 ✓", detail:"AI 검색 전환 기회" },
-      timing: { pass:false, label:"타이밍 △", detail:"BB 중립 — 명확한 신호 없음" },
-    },
-    reason:"라인야후 지분 재편. HyperCLOVA AI 커머스 적용. 네이버웹툰 IP 확장.",
-    counter:"구글 AI 검색 점유율 잠식. 카카오 경쟁. ROE 지속 하락 추세.",
-    history:[192000,188000,183000,187000,181000,189000,185000],
-    radarData:[60,55,58,70,55],
-  },
-  {
-    ticker:"051910", name:"LG화학", sector:"화학",
-    roe:8.3, pbr:0.7, evEbit:11.5, debt:65, moat:"원가우위", score:45, bb:"하단이탈",
-    discountType:"구조적 문제", discountDetail:"지배구조 + 사업 구조 개편 불확실성",
-    buyPct:0, successProb:35, targetPrice:350000, currentPrice:265000,
-    philosophy:{
-      quality: { pass:false, label:"퀄리티 ✗", detail:"ROE 8.3% — 기준 크게 미달" },
-      discount: { pass:false, label:"디스카운트 ✗", detail:"구조적 문제 → 투자 제외" },
-      price: { pass:true, label:"가격 ✓", detail:"PBR 0.7x 저평가지만 가치함정 위험" },
-      macro: { pass:false, label:"매크로 ✗", detail:"석유화학 업황 장기 침체" },
-      timing: { pass:false, label:"타이밍 ✗", detail:"BB 하단 이탈 — 추세 하락" },
-    },
-    reason:"PBR 0.7x 역사적 저점. 배터리 소재 자회사 LG에너지솔루션 가치.",
-    counter:"부채비율 65%. 지배구조 디스카운트. 구조적 업황 악화. Draft 3.0 기준 투자 제외.",
-    history:[285000,278000,271000,268000,260000,263000,265000],
-    radarData:[40,35,55,30,35],
-  },
-  {
-    ticker:"207940", name:"삼성바이오로직스", sector:"바이오",
-    roe:16.8, pbr:5.2, evEbit:42.1, debt:22, moat:"전환비용", score:70, bb:"중립",
-    discountType:"고평가", discountDetail:"안전마진 부족",
-    buyPct:0, successProb:48, targetPrice:980000, currentPrice:870000,
-    philosophy:{
-      quality: { pass:true, label:"퀄리티 ✓", detail:"ROE 16.8%, CDMO 시장 독점적 지위" },
-      discount: { pass:false, label:"디스카운트 ✗", detail:"고평가 → 안전마진 없음" },
-      price: { pass:false, label:"가격 ✗", detail:"PBR 5.2x, EV/EBIT 42x — 과대평가" },
-      macro: { pass:true, label:"매크로 ✓", detail:"글로벌 바이오 아웃소싱 수요 증가" },
-      timing: { pass:false, label:"타이밍 △", detail:"BB 중립" },
-    },
-    reason:"글로벌 5위 CDMO. 5공장 증설. 수주 잔고 역대 최고.",
-    counter:"PBR 5.2x — 안전마진 없음. 적정 주가 대비 고평가. Draft 3.0: 하락 기다릴 것.",
-    history:[850000,862000,875000,858000,880000,865000,870000],
-    radarData:[75,30,25,72,55],
-  },
+// 국장 데이터
+const KR=[
+  {ticker:"005930",name:"삼성전자",sector:"반도체",roe:18.2,pbr:1.1,evEbit:8.3,debt:32,moat:"원가우위",score:92,bb:"하단접근",discountType:"일시적 악재",buyPct:8,successProb:78,targetPrice:82000,currentPrice:65400,phil:{quality:{pass:true,label:"퀄리티 ✓",detail:"ROE 18.2% > 15%, 반도체 원가우위 해자"},discount:{pass:true,label:"디스카운트 ✓",detail:"일시적 악재(사이클) — 구조적 문제 아님"},price:{pass:true,label:"가격 ✓",detail:"PBR 1.1x, EV/EBIT 8.3x — 안전마진 확보"},macro:{pass:true,label:"매크로 ✓",detail:"공포 구간(32) — 하워드 막스 매수 신호"},timing:{pass:true,label:"타이밍 ✓",detail:"볼린저 밴드 하단 접근"}},reason:"자사주 매입 + HBM4 양산 전환 기대. 메모리 사이클 저점 + PBR 1.1로 역사적 저평가 구간.",counter:"중국 CXMT 빠른 추격. 메모리 ASP 하락 지속 가능성. CAPEX 부담.",history:[63000,64200,62800,65100,64500,66200,65400],radar:[90,85,88,75,92]},
+  {ticker:"000660",name:"SK하이닉스",sector:"반도체",roe:22.5,pbr:1.4,evEbit:6.1,debt:45,moat:"전환비용",score:88,bb:"Squeeze",discountType:"사이클 저점",buyPct:7,successProb:74,targetPrice:195000,currentPrice:165000,phil:{quality:{pass:true,label:"퀄리티 ✓",detail:"ROE 22.5%, HBM 독점적 지위"},discount:{pass:true,label:"디스카운트 ✓",detail:"메모리 사이클 저점, 구조적 문제 없음"},price:{pass:true,label:"가격 ✓",detail:"EV/EBIT 6.1x — 업종 최저"},macro:{pass:true,label:"매크로 ✓",detail:"AI 서버 수요 구조적 성장"},timing:{pass:false,label:"타이밍 △",detail:"BB Squeeze — 방향성 불명확"}},reason:"NVDA HBM3E 독점 공급. HBM4 양산 확정. AI 서버 수요 구조적 성장.",counter:"삼성 HBM 추격. 부채비율 45% 주의.",history:[158000,162000,160000,167000,163000,168000,165000],radar:[88,82,90,70,75]},
+  {ticker:"006400",name:"삼성SDI",sector:"배터리",roe:14.1,pbr:0.9,evEbit:7.8,debt:38,moat:"전환비용",score:85,bb:"하단접근",discountType:"섹터 센티먼트",buyPct:5,successProb:68,targetPrice:380000,currentPrice:285000,phil:{quality:{pass:false,label:"퀄리티 △",detail:"ROE 14.1% — 15% 기준 근접 미달"},discount:{pass:true,label:"디스카운트 ✓",detail:"EV 센티먼트 악화 — 일시적"},price:{pass:true,label:"가격 ✓",detail:"PBR 0.9x — 순자산 이하"},macro:{pass:false,label:"매크로 △",detail:"EV 성장 둔화 우려 지속"},timing:{pass:true,label:"타이밍 ✓",detail:"볼린저 밴드 하단 접근"}},reason:"PBR 0.9x 역사적 저점. 전고체 배터리 2027 양산. BMW, 스텔란티스 수주.",counter:"EV 수요 회복 시기 불확실. 중국 CATL 가격 경쟁.",history:[295000,288000,278000,282000,275000,290000,285000],radar:[75,88,70,65,82]},
+  {ticker:"035420",name:"NAVER",sector:"플랫폼",roe:12.8,pbr:1.6,evEbit:14.2,debt:28,moat:"네트워크",score:74,bb:"중립",discountType:"성장 둔화",buyPct:3,successProb:55,targetPrice:220000,currentPrice:185000,phil:{quality:{pass:false,label:"퀄리티 △",detail:"ROE 12.8% — 기준 미달"},discount:{pass:false,label:"디스카운트 △",detail:"성장 둔화 구조적인지 불명확"},price:{pass:false,label:"가격 △",detail:"EV/EBIT 14.2x — 프리미엄 과다"},macro:{pass:true,label:"매크로 ✓",detail:"AI 검색 전환 기회"},timing:{pass:false,label:"타이밍 △",detail:"BB 중립"}},reason:"라인야후 지분 재편. HyperCLOVA AI 커머스 적용.",counter:"구글 AI 검색 잠식. ROE 지속 하락 추세.",history:[192000,188000,183000,187000,181000,189000,185000],radar:[60,55,58,70,55]},
+  {ticker:"051910",name:"LG화학",sector:"화학",roe:8.3,pbr:0.7,evEbit:11.5,debt:65,moat:"원가우위",score:45,bb:"하단이탈",discountType:"구조적 문제",buyPct:0,successProb:35,targetPrice:350000,currentPrice:265000,phil:{quality:{pass:false,label:"퀄리티 ✗",detail:"ROE 8.3% — 기준 크게 미달"},discount:{pass:false,label:"디스카운트 ✗",detail:"구조적 문제 — 투자 제외"},price:{pass:true,label:"가격 ✓",detail:"PBR 0.7x 저평가지만 가치함정 위험"},macro:{pass:false,label:"매크로 ✗",detail:"석유화학 업황 장기 침체"},timing:{pass:false,label:"타이밍 ✗",detail:"BB 하단 이탈"}},reason:"PBR 0.7x 역사적 저점.",counter:"부채비율 65%. 구조적 업황 악화. Draft 3.0 기준 투자 제외.",history:[285000,278000,271000,268000,260000,263000,265000],radar:[40,35,55,30,35]},
+  {ticker:"207940",name:"삼성바이오",sector:"바이오",roe:16.8,pbr:5.2,evEbit:42.1,debt:22,moat:"전환비용",score:70,bb:"중립",discountType:"고평가",buyPct:0,successProb:48,targetPrice:980000,currentPrice:870000,phil:{quality:{pass:true,label:"퀄리티 ✓",detail:"ROE 16.8%, CDMO 시장 독점"},discount:{pass:false,label:"디스카운트 ✗",detail:"고평가 — 안전마진 없음"},price:{pass:false,label:"가격 ✗",detail:"PBR 5.2x, EV/EBIT 42x"},macro:{pass:true,label:"매크로 ✓",detail:"글로벌 바이오 아웃소싱 수요 증가"},timing:{pass:false,label:"타이밍 △",detail:"BB 중립"}},reason:"글로벌 5위 CDMO. 5공장 증설. 수주 잔고 역대 최고.",counter:"PBR 5.2x — 안전마진 없음. 하락 기다릴 것.",history:[850000,862000,875000,858000,880000,865000,870000],radar:[75,30,25,72,55]},
 ];
 
-// ── 국장 렌더 ─────────────────────────────────────────────────
-function renderKR() {
-  document.getElementById("krCards").innerHTML = KR.map((s,i) => {
-    const matchScore = Object.values(s.philosophy).filter(p=>p.pass).length;
-    const scoreColor = s.score>=80?"var(--green)":s.score>=60?"var(--orange)":"var(--red)";
-    const probColor = s.successProb>=70?"var(--green)":s.successProb>=55?"var(--orange)":"var(--red)";
-    return `
-    <div class="stock-card${krSelected===i?" selected":""}" onclick="selectKR(${i})">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
-        <div>
-          <div style="font-size:15px;font-weight:700;">${s.name}</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${s.ticker} · ${s.sector}</div>
-        </div>
-        <span class="badge ba" style="font-size:13px;padding:4px 10px;">${s.score}</span>
-      </div>
+function scoreColor(s){return s>=80?"var(--green)":s>=60?"var(--orange)":"var(--red)";}
+function probColor(p){return p>=70?"var(--green)":p>=55?"var(--orange)":"var(--red)";}
+function scoreBar(s){const c=scoreColor(s);return '<div class="sb-wrap"><div class="sb-track"><div class="sb-fill" style="width:'+s+'%;background:'+c+'"></div></div><span class="sb-num" style="color:'+c+'">'+s+'</span></div>';}
 
-      <!-- 철학 매칭 -->
-      <div style="margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:11px;color:var(--muted);">Draft 3.0 매칭</span>
-          <span style="font-size:11px;font-weight:700;color:${scoreColor};">${matchScore}/5</span>
-        </div>
-        <div class="match-bar"><div class="match-fill" style="width:${matchScore/5*100}%;"></div></div>
-        <div style="display:flex;gap:4px;margin-top:6px;">
-          ${Object.values(s.philosophy).map(p=>`<span style="width:28px;height:4px;border-radius:2px;background:${p.pass?"var(--green)":"var(--red)"};display:inline-block;"></span>`).join("")}
-        </div>
-      </div>
-
-      <!-- 핵심 지표 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
-        <div style="background:var(--surface2);border-radius:6px;padding:7px;">
-          <div style="font-size:9px;color:var(--muted);">ROE</div>
-          <div style="font-size:13px;font-weight:700;color:${s.roe>=15?"var(--green)":"var(--orange)"};">${s.roe}%</div>
-        </div>
-        <div style="background:var(--surface2);border-radius:6px;padding:7px;">
-          <div style="font-size:9px;color:var(--muted);">PBR</div>
-          <div style="font-size:13px;font-weight:700;color:${s.pbr<=1.2?"var(--green)":"var(--text)"};">${s.pbr}x</div>
-        </div>
-        <div style="background:var(--surface2);border-radius:6px;padding:7px;">
-          <div style="font-size:9px;color:var(--muted);">매수 비중</div>
-          <div style="font-size:13px;font-weight:700;color:${s.buyPct>0?"var(--accent)":"var(--muted)"};">${s.buyPct>0?s.buyPct+"% 권장":"제외"}</div>
-        </div>
-        <div style="background:var(--surface2);border-radius:6px;padding:7px;">
-          <div style="font-size:9px;color:var(--muted);">성공확률</div>
-          <div style="font-size:13px;font-weight:700;color:${probColor};">${s.successProb}%</div>
-        </div>
-      </div>
-
-      <!-- 성공확률 바 -->
-      <div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:10px;color:var(--muted);">목표가 도달 확률 (12M)</span>
-          <span style="font-size:10px;font-weight:700;color:${probColor};">${s.successProb}%</span>
-        </div>
-        <div class="prob-bar"><div class="prob-fill" style="width:${s.successProb}%;background:${probColor};"></div></div>
-      </div>
-
-      <div style="margin-top:10px;font-size:10px;color:var(--accent);text-align:center;">클릭하여 상세 분석 보기 ↓</div>
-    </div>`;
-  }).join("");
+function stockCardHTML(s,i,sel,isUS){
+  const mc=Object.values(s.phil).filter(p=>p.pass).length;
+  const sc=scoreColor(s.score),pc=probColor(s.successProb);
+  const metric1=isUS?{label:"ROIC",val:s.roic+"%",good:s.roic>=30}:{label:"ROE",val:s.roe+"%",good:s.roe>=15};
+  const metric2=isUS?{label:"PEG",val:s.peg+"x",good:s.peg<=1.5}:{label:"PBR",val:s.pbr+"x",good:s.pbr<=1.2};
+  return '<div class="stock-card'+(sel===i?" sel":"")+'" onclick="'+(isUS?"selectUS":"selectKR")+'('+i+')">'+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">'+
+    '<div><div style="font-size:15px;font-weight:700">'+s.name+'</div><div style="font-size:10px;color:var(--muted);margin-top:2px">'+s.ticker+' · '+s.sector+'</div></div>'+
+    '<span class="badge ba" style="font-size:13px;padding:4px 10px">'+s.score+'</span></div>'+
+    '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--muted)">Draft 3.0 매칭</span><span style="font-size:11px;font-weight:700;color:'+sc+'">'+mc+'/5</span></div>'+
+    '<div class="match-bar"><div class="match-fill" style="width:'+(mc/5*100)+'%"></div></div>'+
+    '<div style="display:flex;gap:4px;margin-top:6px">'+Object.values(s.phil).map(p=>'<span style="width:28px;height:4px;border-radius:2px;background:'+(p.pass?"var(--green)":"var(--red)")+';display:inline-block"></span>').join("")+'</div></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">'+
+    '<div style="background:var(--surface2);border-radius:6px;padding:7px"><div style="font-size:9px;color:var(--muted)">'+metric1.label+'</div><div style="font-size:13px;font-weight:700;color:'+(metric1.good?"var(--green)":"var(--orange)")+'">'+metric1.val+'</div></div>'+
+    '<div style="background:var(--surface2);border-radius:6px;padding:7px"><div style="font-size:9px;color:var(--muted)">'+metric2.label+'</div><div style="font-size:13px;font-weight:700;color:'+(metric2.good?"var(--green)":"var(--text)")+'">'+metric2.val+'</div></div>'+
+    '<div style="background:var(--surface2);border-radius:6px;padding:7px"><div style="font-size:9px;color:var(--muted)">매수 비중</div><div style="font-size:13px;font-weight:700;color:'+(s.buyPct>0?"var(--accent)":"var(--muted)")+'">'+( s.buyPct>0?s.buyPct+"% 권장":"제외")+'</div></div>'+
+    '<div style="background:var(--surface2);border-radius:6px;padding:7px"><div style="font-size:9px;color:var(--muted)">성공확률</div><div style="font-size:13px;font-weight:700;color:'+pc+'">'+s.successProb+'%</div></div></div>'+
+    '<div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:10px;color:var(--muted)">목표가 도달 확률 (12M)</span><span style="font-size:10px;font-weight:700;color:'+pc+'">'+s.successProb+'%</span></div>'+
+    '<div class="prob-bar"><div class="prob-fill" style="width:'+s.successProb+'%;background:'+pc+'"></div></div></div>'+
+    '<div style="margin-top:10px;font-size:10px;color:var(--accent);text-align:center">클릭하여 상세 분석 보기 ↓</div></div>';
 }
 
-function selectKR(i) {
-  krSelected = krSelected===i?null:i;
-  renderKR();
-  const panel = document.getElementById("kr-detail");
-  if(krSelected===null) { panel.style.display="none"; return; }
+function renderKR(){document.getElementById("krCards").innerHTML=KR.map((s,i)=>stockCardHTML(s,i,krSel,false)).join("");}
+function renderUS(){document.getElementById("usCards").innerHTML=US.map((s,i)=>stockCardHTML(s,i,usSel,true)).join("");}
+
+let rChart=null,pChart=null;
+function detailHTML(s,isUS){
+  const sc=scoreColor(s.score),pc=probColor(s.successProb);
+  const upside=Math.round((s.targetPrice/s.currentPrice-1)*100);
+  const pricePrefix=isUS?"$":"₩";
+  return '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">'+
+    '<div><div style="font-size:18px;font-weight:700">'+s.name+' <span style="font-size:13px;color:var(--muted);font-weight:400">'+s.ticker+'</span></div>'+
+    '<div style="font-size:12px;color:var(--muted);margin-top:2px">'+s.sector+' · 목표가 '+pricePrefix+s.targetPrice.toLocaleString()+'</div></div>'+
+    '<div style="text-align:right"><div style="font-size:28px;font-weight:800;color:'+sc+'">'+s.score+'</div><div style="font-size:10px;color:var(--muted)">종합 점수</div></div></div>'+
+    '<div class="g2" style="margin-bottom:16px"><div><div style="font-size:11px;color:var(--muted);margin-bottom:8px">최근 7일 주가</div><canvas id="pC" height="160"></canvas></div>'+
+    '<div><div style="font-size:11px;color:var(--muted);margin-bottom:8px">Draft 3.0 레이더</div><canvas id="rC" height="160"></canvas></div></div>'+
+    '<div class="g2" style="margin-bottom:16px">'+
+    '<div class="card-sm"><div class="ct">권장 매수 비중</div><div style="font-size:32px;font-weight:800;color:'+(s.buyPct>0?"var(--accent)":"var(--muted)")+'">'+( s.buyPct>0?s.buyPct+"%":"제외")+'</div><div style="font-size:11px;color:var(--dim);margin-top:4px">'+(s.buyPct>0?"포트폴리오 대비 분할매수":"Draft 3.0 기준 미충족")+'</div></div>'+
+    '<div class="card-sm"><div class="ct">성공확률 (12M)</div><div style="font-size:32px;font-weight:800;color:'+pc+'">'+s.successProb+'%</div><div style="font-size:11px;color:var(--dim);margin-top:4px">'+pricePrefix+s.currentPrice.toLocaleString()+' → '+pricePrefix+s.targetPrice.toLocaleString()+' (+'+upside+'%)</div>'+
+    '<div class="prob-bar" style="margin-top:8px;height:8px"><div class="prob-fill" style="width:'+s.successProb+'%;background:'+pc+'"></div></div></div></div>'+
+    '<div style="margin-bottom:16px"><div style="font-size:12px;font-weight:600;margin-bottom:8px">Draft 3.0 체크리스트</div><div style="display:flex;flex-direction:column;gap:6px">'+
+    Object.values(s.phil).map(p=>'<div class="check-item '+(p.pass?"ci-pass":"ci-fail")+'"><span style="font-size:16px">'+(p.pass?"✓":"✗")+'</span><div><div style="font-size:12px;font-weight:600;color:'+(p.pass?"var(--green)":"var(--red)")+'">'+p.label+'</div><div style="font-size:11px;color:var(--dim)">'+p.detail+'</div></div></div>').join("")+'</div></div>'+
+    '<div class="g2"><div style="padding:14px;background:var(--green-dim);border-radius:10px;border-left:3px solid var(--green)">'+
+    '<div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:6px">📈 투자 논리</div><div style="font-size:12px;line-height:1.7">'+s.reason+'</div></div>'+
+    '<div style="padding:14px;background:var(--red-dim);border-radius:10px;border-left:3px solid var(--red)">'+
+    '<div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:6px">⚠️ 반론</div><div style="font-size:12px;line-height:1.7">'+s.counter+'</div></div></div>';
+}
+
+function showDetail(s,panelId,contentId,isUS){
+  const panel=document.getElementById(panelId);
   panel.style.display="block";
-  renderKRDetail(KR[i]);
-  panel.scrollIntoView({behavior:"smooth",block:"start"});
-}
-
-let radarChart = null, priceChart = null;
-function renderKRDetail(s) {
-  const scoreColor = s.score>=80?"var(--green)":s.score>=60?"var(--orange)":"var(--red)";
-  document.getElementById("kr-detail-content").innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-      <div>
-        <div style="font-size:18px;font-weight:700;">${s.name} <span style="font-size:13px;color:var(--muted);font-weight:400;">${s.ticker}</span></div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${s.sector} · 목표가 ₩${s.targetPrice.toLocaleString()}</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:28px;font-weight:800;color:${scoreColor};">${s.score}</div>
-        <div style="font-size:10px;color:var(--muted);">종합 점수</div>
-      </div>
-    </div>
-
-    <div class="g2" style="margin-bottom:16px;">
-      <!-- 차트 -->
-      <div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">최근 7일 주가</div>
-        <canvas id="priceC" height="160"></canvas>
-      </div>
-      <div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Draft 3.0 점수 레이더</div>
-        <canvas id="radarC" height="160"></canvas>
-      </div>
-    </div>
-
-    <!-- 매수 비중 & 성공확률 -->
-    <div class="g2" style="margin-bottom:16px;">
-      <div class="card-sm">
-        <div class="ct">권장 매수 비중</div>
-        <div style="font-size:32px;font-weight:800;color:${s.buyPct>0?"var(--accent)":"var(--muted)"};">${s.buyPct>0?s.buyPct+"%":"제외"}</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:4px;">${s.buyPct>0?"포트폴리오 대비 분할매수 권장":"Draft 3.0 기준 미충족"}</div>
-        ${s.buyPct>0?`<div class="prob-bar" style="margin-top:8px;height:8px;"><div class="prob-fill" style="width:${s.buyPct*10}%;background:var(--accent);"></div></div>`:""}
-      </div>
-      <div class="card-sm">
-        <div class="ct">목표가 도달 성공확률 (12M)</div>
-        <div style="font-size:32px;font-weight:800;color:${s.successProb>=70?"var(--green)":s.successProb>=55?"var(--orange)":"var(--red)"};">${s.successProb}%</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:4px;">현재 ₩${s.currentPrice.toLocaleString()} → 목표 ₩${s.targetPrice.toLocaleString()} (+${Math.round((s.targetPrice/s.currentPrice-1)*100)}%)</div>
-        <div class="prob-bar" style="margin-top:8px;height:8px;"><div class="prob-fill" style="width:${s.successProb}%;background:${s.successProb>=70?"var(--green)":s.successProb>=55?"var(--orange)":"var(--red)"};"></div></div>
-      </div>
-    </div>
-
-    <!-- Draft 3.0 체크리스트 -->
-    <div style="margin-bottom:16px;">
-      <div style="font-size:12px;font-weight:600;margin-bottom:8px;">Draft 3.0 체크리스트</div>
-      <div class="checklist">
-        ${Object.values(s.philosophy).map(p=>`
-          <div class="check-item ${p.pass?"pass":"fail"}">
-            <span style="font-size:16px;">${p.pass?"✓":"✗"}</span>
-            <div>
-              <div style="font-size:12px;font-weight:600;color:${p.pass?"var(--green)":"var(--red)"};">${p.label}</div>
-              <div style="font-size:11px;color:var(--dim);">${p.detail}</div>
-            </div>
-          </div>`).join("")}
-      </div>
-    </div>
-
-    <!-- 투자 논리 & 반론 -->
-    <div class="g2">
-      <div style="padding:14px;background:var(--green-dim);border-radius:10px;border-left:3px solid var(--green);">
-        <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:6px;">📈 투자 논리</div>
-        <div style="font-size:12px;line-height:1.7;">${s.reason}</div>
-      </div>
-      <div style="padding:14px;background:var(--red-dim);border-radius:10px;border-left:3px solid var(--red);">
-        <div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:6px;">⚠️ 반론 (내가 왜 틀릴 수 있나)</div>
-        <div style="font-size:12px;line-height:1.7;">${s.counter}</div>
-      </div>
-    </div>
-  `;
-
-  // 주가 차트
-  setTimeout(() => {
-    if(priceChart) priceChart.destroy();
-    priceChart = new Chart(document.getElementById("priceC"), {
-      type:"line",
-      data:{
-        labels:["7일전","6일전","5일전","4일전","3일전","2일전","오늘"],
-        datasets:[{
-          data:s.history, fill:true,
-          borderColor:"#c9a55a", backgroundColor:"rgba(201,165,90,0.1)",
-          tension:0.4, pointRadius:3, pointBackgroundColor:"#c9a55a", borderWidth:2
-        }]
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{
-          x:{grid:{color:"#1e2030"},ticks:{color:"#4a4d6a",font:{size:9}}},
-          y:{grid:{color:"#1e2030"},ticks:{color:"#4a4d6a",font:{size:9},callback:v=>v.toLocaleString()}}
-        }
-      }
-    });
-
-    if(radarChart) radarChart.destroy();
-    radarChart = new Chart(document.getElementById("radarC"), {
-      type:"radar",
-      data:{
-        labels:["퀄리티","디스카운트","가격","매크로","타이밍"],
-        datasets:[{
-          data:s.radarData, fill:true,
-          borderColor:"#c9a55a", backgroundColor:"rgba(201,165,90,0.15)",
-          pointBackgroundColor:"#c9a55a", borderWidth:2
-        }]
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
-        scales:{r:{
-          min:0, max:100,
-          grid:{color:"#1e2030"},
-          ticks:{display:false},
-          pointLabels:{color:"#6b7094",font:{size:10}}
-        }}
-      }
-    });
-  }, 50);
-}
-
-// ── 미장 데이터 ───────────────────────────────────────────────
-const US = [
-  {
-    ticker:"MSFT", name:"Microsoft", sector:"클라우드/AI",
-    roic:42.3, peg:1.8, moat:"전환비용+네트워크", score:94, phase:"보유 유지",
-    buyPct:10, successProb:82, targetPrice:480, currentPrice:415,
-    reason:"Azure 30%+ 성장. Copilot AI 전 제품 탑재. Office 365 전환비용 해자 강력.",
-    counter:"Valuation 부담(PE 35x). OpenAI 의존 리스크. 규제 리스크 증가.",
-    history:[408,412,409,418,414,420,415],
-    radarData:[95,80,78,90,85],
-    philosophy:{
-      quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 42.3%, 전환비용+네트워크 해자"},
-      discount:{pass:true,label:"디스카운트 ✓",detail:"AI 전환 과소평가 — 일시적"},
-      price:{pass:true,label:"가격 ✓",detail:"PEG 1.8x — 성장 대비 합리적"},
-      macro:{pass:true,label:"매크로 ✓",detail:"AI 인프라 장기 성장 테마"},
-      timing:{pass:true,label:"타이밍 ✓",detail:"52주 고점 대비 조정 후 매수 기회"},
-    }
-  },
-  {
-    ticker:"AAPL", name:"Apple", sector:"소비자 기술",
-    roic:58.2, peg:2.1, moat:"브랜드+생태계", score:90, phase:"보유 유지",
-    buyPct:8, successProb:76, targetPrice:250, currentPrice:218,
-    reason:"서비스 매출 30%+ 성장. 생태계 전환비용. Apple Intelligence AI 탑재.",
-    counter:"중국 매출 의존도 30%. 아이폰 교체 사이클 연장. PEG 2.1 다소 부담.",
-    history:[212,215,210,220,216,222,218],
-    radarData:[92,72,70,85,80],
-    philosophy:{
-      quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 58.2% — 세계 최고 수준"},
-      discount:{pass:true,label:"디스카운트 ✓",detail:"중국 리스크 과대 반영"},
-      price:{pass:false,label:"가격 △",detail:"PEG 2.1x — 약간 고평가"},
-      macro:{pass:true,label:"매크로 ✓",detail:"AI 온디바이스 선도"},
-      timing:{pass:true,label:"타이밍 ✓",detail:"52주 고점 대비 조정 구간"},
-    }
-  },
-  {
-    ticker:"GOOGL", name:"Alphabet", sector:"광고/AI/클라우드",
-    roic:32.5, peg:1.2, moat:"네트워크+데이터", score:91, phase:"진입 가능",
-    buyPct:9, successProb:80, targetPrice:230, currentPrice:193,
-    reason:"PEG 1.2x — 빅테크 중 가장 저평가. Google Cloud 28% 성장. Gemini AI 검색 통합.",
-    counter:"AI 검색 자기잠식 위험. 광고 규제 리스크. DOJ 반독점 소송.",
-    history:[185,189,183,195,191,196,193],
-    radarData:[88,85,92,82,80],
-    philosophy:{
-      quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 32.5%, 검색 독점 네트워크 해자"},
-      discount:{pass:true,label:"디스카운트 ✓",detail:"AI 자기잠식 우려 과대 반영"},
-      price:{pass:true,label:"가격 ✓",detail:"PEG 1.2x — 빅테크 최저"},
-      macro:{pass:true,label:"매크로 ✓",detail:"클라우드 + AI 검색 전환 수혜"},
-      timing:{pass:true,label:"타이밍 ✓",detail:"52주 저점 근처"},
-    }
-  },
-  {
-    ticker:"V", name:"Visa", sector:"금융 네트워크",
-    roic:44.8, peg:1.5, moat:"네트워크효과", score:89, phase:"보유 유지",
-    buyPct:7, successProb:75, targetPrice:320, currentPrice:285,
-    reason:"글로벌 결제 네트워크 독점. ROIC 44.8%. 인플레이션 자동 헤지.",
-    counter:"핀테크 경쟁(Stripe, Block). 가맹점 수수료 규제 리스크.",
-    history:[278,282,279,288,283,290,285],
-    radarData:[90,75,80,85,78],
-    philosophy:{
-      quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 44.8%, 결제 네트워크 독점"},
-      discount:{pass:true,label:"디스카운트 ✓",detail:"핀테크 위협 과대 반영"},
-      price:{pass:true,label:"가격 ✓",detail:"PEG 1.5x — 합리적"},
-      macro:{pass:true,label:"매크로 ✓",detail:"글로벌 디지털 결제 성장"},
-      timing:{pass:false,label:"타이밍 △",detail:"BB 중립"},
-    }
-  },
-  {
-    ticker:"COST", name:"Costco", sector:"유통",
-    roic:28.1, peg:2.8, moat:"원가우위+브랜드", score:78, phase:"고평가 주의",
-    buyPct:0, successProb:45, targetPrice:900, currentPrice:975,
-    reason:"멤버십 모델 강력한 해자. 경기 방어적. ROE 28%.",
-    counter:"PEG 2.8x — 과대평가. 현재가 대비 목표가 하회. Draft 3.0: 하락 기다릴 것.",
-    history:[955,962,970,958,980,968,975],
-    radarData:[80,40,35,75,45],
-    philosophy:{
-      quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 28.1%, 멤버십 해자"},
-      discount:{pass:false,label:"디스카운트 ✗",detail:"고평가 — 안전마진 없음"},
-      price:{pass:false,label:"가격 ✗",detail:"PEG 2.8x — 과대평가"},
-      macro:{pass:true,label:"매크로 ✓",detail:"경기 방어적"},
-      timing:{pass:false,label:"타이밍 ✗",detail:"52주 고점 근처"},
-    }
-  },
-];
-
-function renderUS() {
-  document.getElementById("usCards").innerHTML = US.map((s,i) => {
-    const matchScore = Object.values(s.philosophy).filter(p=>p.pass).length;
-    const sc = s.score>=80?"var(--green)":s.score>=60?"var(--orange)":"var(--red)";
-    const pc = s.successProb>=70?"var(--green)":s.successProb>=55?"var(--orange)":"var(--red)";
-    return `
-    <div class="stock-card${usSelected===i?" selected":""}" onclick="selectUS(${i})">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
-        <div>
-          <div style="font-size:15px;font-weight:700;">${s.name}</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${s.ticker} · ${s.sector}</div>
-        </div>
-        <span class="badge ba" style="font-size:13px;padding:4px 10px;">${s.score}</span>
-      </div>
-      <div style="margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:11px;color:var(--muted);">Draft 3.0 매칭</span>
-          <span style="font-size:11px;font-weight:700;color:${sc};">${matchScore}/5</span>
-        </div>
-        <div class="match-bar"><div class="match-fill" style="width:${matchScore/5*100}%;"></div></div>
-        <div style="display:flex;gap:4px;margin-top:6px;">
-          ${Object.values(s.philosophy).map(p=>`<span style="width:28px;height:4px;border-radius:2px;background:${p.pass?"var(--green)":"var(--red)"};display:inline-block;"></span>`).join("")}
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
-        <div style="background:var(--surface2);border-radius:6px;padding:7px;">
-          <div style="font-size:9px;color:var(--muted);">ROIC</div>
-          <div style="font-size:13px;font-weight:700;color:${s.roic>=30?"var(--green)":"var(--orange)"};">${s.roic}%</div>
-        </div>
-        <div style="background:var(--surface2);border-radius:6px;padding:7px;">
-          <div style="font-size:9px;color:var(--muted);">PEG</div>
-          <div style="font-size:13px;font-weight:700;color:${s.peg<=1.5?"var(--green)":s.peg<=2?"var(--text)":"var(--orange)"};">${s.peg}x</div>
-        </div>
-        <div style="background:var(--surface2);border-radius:6px;padding:7px;">
-          <div style="font-size:9px;color:var(--muted);">매수 비중</div>
-          <div style="font-size:13px;font-weight:700;color:${s.buyPct>0?"var(--accent)":"var(--muted)"};">${s.buyPct>0?s.buyPct+"% 권장":"제외"}</div>
-        </div>
-        <div style="background:var(--surface2);border-radius:6px;padding:7px;">
-          <div style="font-size:9px;color:var(--muted);">성공확률</div>
-          <div style="font-size:13px;font-weight:700;color:${pc};">${s.successProb}%</div>
-        </div>
-      </div>
-      <div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:10px;color:var(--muted);">목표가 도달 확률 (12M)</span>
-          <span style="font-size:10px;font-weight:700;color:${pc};">${s.successProb}%</span>
-        </div>
-        <div class="prob-bar"><div class="prob-fill" style="width:${s.successProb}%;background:${pc};"></div></div>
-      </div>
-      <div style="margin-top:10px;font-size:10px;color:var(--accent);text-align:center;">클릭하여 상세 분석 보기 ↓</div>
-    </div>`;
-  }).join("");
-}
-
-let usRadar = null, usPrice = null;
-function selectUS(i) {
-  usSelected = usSelected===i?null:i;
-  renderUS();
-  const panel = document.getElementById("us-detail");
-  if(usSelected===null) { panel.style.display="none"; return; }
-  panel.style.display="block";
-  const s = US[i];
-  const sc = s.score>=80?"var(--green)":s.score>=60?"var(--orange)":"var(--red)";
-  const pc = s.successProb>=70?"var(--green)":s.successProb>=55?"var(--orange)":"var(--red)";
-  document.getElementById("us-detail-content").innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-      <div>
-        <div style="font-size:18px;font-weight:700;">${s.name} <span style="font-size:13px;color:var(--muted);font-weight:400;">${s.ticker}</span></div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${s.sector} · 목표가 $${s.targetPrice}</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:28px;font-weight:800;color:${sc};">${s.score}</div>
-        <div style="font-size:10px;color:var(--muted);">종합 점수</div>
-      </div>
-    </div>
-    <div class="g2" style="margin-bottom:16px;">
-      <div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">최근 7일 주가 ($)</div><canvas id="usPriceC" height="160"></canvas></div>
-      <div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Draft 3.0 레이더</div><canvas id="usRadarC" height="160"></canvas></div>
-    </div>
-    <div class="g2" style="margin-bottom:16px;">
-      <div class="card-sm">
-        <div class="ct">권장 매수 비중</div>
-        <div style="font-size:32px;font-weight:800;color:${s.buyPct>0?"var(--accent)":"var(--muted)"};">${s.buyPct>0?s.buyPct+"%":"제외"}</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:4px;">${s.buyPct>0?"분할매수 권장":"현재 가격 고평가"}</div>
-      </div>
-      <div class="card-sm">
-        <div class="ct">성공확률 (12M)</div>
-        <div style="font-size:32px;font-weight:800;color:${pc};">${s.successProb}%</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:4px;">$${s.currentPrice} → $${s.targetPrice} (+${Math.round((s.targetPrice/s.currentPrice-1)*100)}%)</div>
-        <div class="prob-bar" style="margin-top:8px;height:8px;"><div class="prob-fill" style="width:${s.successProb}%;background:${pc};"></div></div>
-      </div>
-    </div>
-    <div style="margin-bottom:16px;">
-      <div style="font-size:12px;font-weight:600;margin-bottom:8px;">Draft 3.0 체크리스트</div>
-      <div class="checklist">
-        ${Object.values(s.philosophy).map(p=>`
-          <div class="check-item ${p.pass?"pass":"fail"}">
-            <span style="font-size:16px;">${p.pass?"✓":"✗"}</span>
-            <div><div style="font-size:12px;font-weight:600;color:${p.pass?"var(--green)":"var(--red)"};">${p.label}</div><div style="font-size:11px;color:var(--dim);">${p.detail}</div></div>
-          </div>`).join("")}
-      </div>
-    </div>
-    <div class="g2">
-      <div style="padding:14px;background:var(--green-dim);border-radius:10px;border-left:3px solid var(--green);">
-        <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:6px;">📈 투자 논리</div>
-        <div style="font-size:12px;line-height:1.7;">${s.reason}</div>
-      </div>
-      <div style="padding:14px;background:var(--red-dim);border-radius:10px;border-left:3px solid var(--red);">
-        <div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:6px;">⚠️ 반론</div>
-        <div style="font-size:12px;line-height:1.7;">${s.counter}</div>
-      </div>
-    </div>`;
+  document.getElementById(contentId).innerHTML=detailHTML(s,isUS);
   setTimeout(()=>{
-    if(usPrice) usPrice.destroy();
-    usPrice = new Chart(document.getElementById("usPriceC"),{type:"line",data:{labels:["7일전","6일전","5일전","4일전","3일전","2일전","오늘"],datasets:[{data:s.history,fill:true,borderColor:"#22c55e",backgroundColor:"rgba(34,197,94,0.1)",tension:0.4,pointRadius:3,pointBackgroundColor:"#22c55e",borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"#1e2030"},ticks:{color:"#4a4d6a",font:{size:9}}},y:{grid:{color:"#1e2030"},ticks:{color:"#4a4d6a",font:{size:9}}}}}});
-    if(usRadar) usRadar.destroy();
-    usRadar = new Chart(document.getElementById("usRadarC"),{type:"radar",data:{labels:["퀄리티","디스카운트","가격","매크로","타이밍"],datasets:[{data:s.radarData,fill:true,borderColor:"#22c55e",backgroundColor:"rgba(34,197,94,0.15)",pointBackgroundColor:"#22c55e",borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:100,grid:{color:"#1e2030"},ticks:{display:false},pointLabels:{color:"#6b7094",font:{size:10}}}}}});
+    if(pChart)pChart.destroy();
+    pChart=new Chart(document.getElementById("pC"),{type:"line",data:{labels:["7일전","6일전","5일전","4일전","3일전","2일전","오늘"],datasets:[{data:s.history,fill:true,borderColor:isUS?"#22c55e":"#c9a55a",backgroundColor:isUS?"rgba(34,197,94,0.1)":"rgba(201,165,90,0.1)",tension:0.4,pointRadius:3,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"#1e2030"},ticks:{color:"#4a4d6a",font:{size:9}}},y:{grid:{color:"#1e2030"},ticks:{color:"#4a4d6a",font:{size:9},callback:v=>v.toLocaleString()}}}}});
+    if(rChart)rChart.destroy();
+    rChart=new Chart(document.getElementById("rC"),{type:"radar",data:{labels:["퀄리티","디스카운트","가격","매크로","타이밍"],datasets:[{data:s.radar,fill:true,borderColor:isUS?"#22c55e":"#c9a55a",backgroundColor:isUS?"rgba(34,197,94,0.15)":"rgba(201,165,90,0.15)",borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:100,grid:{color:"#1e2030"},ticks:{display:false},pointLabels:{color:"#6b7094",font:{size:10}}}}}});
   },50);
   panel.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-// ── 채권 ─────────────────────────────────────────────────────
-function renderBonds() {
-  const bonds=[
-    {name:"미국 10Y 국채",yield:"4.52%",change:"+0.03",up:true,signal:"금리 상승 사이클 — 신규 주식 진입 신중"},
-    {name:"한국 3Y 국채",yield:"3.28%",change:"-0.02",up:false,signal:"안정적 — 현 수준 유지"},
-    {name:"미국 2Y-10Y 스프레드",yield:"0.15%",change:"+0.05",up:true,signal:"정상화 진행 중 — 경기침체 리스크 완화"},
-  ];
-  const comm=[
-    {name:"금",price:"$2,645",change:"+1.2%",up:true,signal:"안전자산 수요 상승 — 공포 구간 확인"},
-    {name:"WTI 원유",price:"$71.3",change:"-0.8%",up:false,signal:"공급 과잉 — 에너지 섹터 주의"},
-    {name:"구리",price:"$9,120",change:"+0.5%",up:true,signal:"경기 회복 신호 — 산업재 관심"},
-  ];
-  document.getElementById("bondsBox").innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-      ${bonds.map(b=>`<div class="card-sm" style="display:flex;justify-content:space-between;align-items:center;">
-        <div><div style="font-size:13px;font-weight:600;">${b.name}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">${b.signal}</div></div>
-        <div style="text-align:right;"><div style="font-size:20px;font-weight:700;">${b.yield}</div><div style="font-size:12px;color:${b.up?"var(--red)":"var(--green)"};">${b.change}</div></div>
-      </div>`).join("")}
-    </div>
-    <div class="g3">
-      ${comm.map(c=>`<div class="card">
-        <div class="ct">${c.name}</div>
-        <div style="font-size:22px;font-weight:700;">${c.price}</div>
-        <div style="font-size:13px;font-weight:600;color:${c.up?"var(--green)":"var(--red)"};">${c.change}</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:6px;">${c.signal}</div>
-      </div>`).join("")}
-    </div>
-    <div class="card" style="margin-top:16px;">
-      <div class="ct">매크로 원칙 — 하워드 막스</div>
-      <div style="font-size:13px;line-height:1.8;color:var(--text);">미국 10Y 금리 <b style="color:var(--orange);">4.52%</b> 상승 사이클 지속. 하워드 막스 원칙에 따라 신규 진입보다 <b>기존 보유 유지</b>에 집중. 현금 비중 <b style="color:var(--accent);">20%</b> 이상 실탄 유지 권장. 금리 인하 사이클 전환 시 주식 비중 확대 기회.</div>
-    </div>`;
+function selectKR(i){
+  if(krSel===i){krSel=null;document.getElementById("kr-detail").style.display="none";renderKR();return;}
+  krSel=i;renderKR();showDetail(KR[i],"kr-detail","kr-detail-content",false);
+}
+function selectUS(i){
+  if(usSel===i){usSel=null;document.getElementById("us-detail").style.display="none";renderUS();return;}
+  usSel=i;renderUS();showDetail(US[i],"us-detail","us-detail-content",true);
 }
 
-// ── 투자 일지 ─────────────────────────────────────────────────
-const JOURNAL=[
-  {date:"2026-02-25",ticker:"005930",name:"삼성전자",action:"매수",reason:"자사주 매입 공시 + ROE 18% + PBR 1.1. 볼린저 밴드 하단 접근. Draft 3.0 5/5 통과.",counter:"메모리 사이클 피크아웃 가능성. 중국 CXMT 추격. HBM 전환이 리스크 완화 요인.",target:"₩82,000",buyPct:8,successProb:78},
-  {date:"2026-02-20",ticker:"MSFT",name:"Microsoft",action:"보유유지",reason:"ROIC 42%, Azure AI 성장 지속. PEG 1.8. Draft 3.0 5/5 통과.",counter:"Valuation 부담. OpenAI 의존도. DOJ 반독점 리스크.",target:"$480",buyPct:10,successProb:82},
+// 미장 데이터
+const US=[
+  {ticker:"MSFT",name:"Microsoft",sector:"클라우드/AI",roic:42.3,peg:1.8,moat:"전환비용+네트워크",score:94,phase:"보유 유지",buyPct:10,successProb:82,targetPrice:480,currentPrice:415,reason:"Azure 30%+ 성장. Copilot AI 전 제품 탑재. Office 365 전환비용 해자.",counter:"Valuation 부담(PE 35x). OpenAI 의존 리스크.",history:[408,412,409,418,414,420,415],radar:[95,80,78,90,85],phil:{quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 42.3%, 전환비용+네트워크 해자"},discount:{pass:true,label:"디스카운트 ✓",detail:"AI 전환 과소평가"},price:{pass:true,label:"가격 ✓",detail:"PEG 1.8x — 합리적"},macro:{pass:true,label:"매크로 ✓",detail:"AI 인프라 장기 성장"},timing:{pass:true,label:"타이밍 ✓",detail:"조정 후 매수 기회"}}},
+  {ticker:"AAPL",name:"Apple",sector:"소비자 기술",roic:58.2,peg:2.1,moat:"브랜드+생태계",score:90,phase:"보유 유지",buyPct:8,successProb:76,targetPrice:250,currentPrice:218,reason:"서비스 매출 30%+ 성장. Apple Intelligence AI 탑재.",counter:"중국 매출 의존도 30%. PEG 2.1 다소 부담.",history:[212,215,210,220,216,222,218],radar:[92,72,70,85,80],phil:{quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 58.2% — 세계 최고"},discount:{pass:true,label:"디스카운트 ✓",detail:"중국 리스크 과대 반영"},price:{pass:false,label:"가격 △",detail:"PEG 2.1x — 약간 고평가"},macro:{pass:true,label:"매크로 ✓",detail:"AI 온디바이스 선도"},timing:{pass:true,label:"타이밍 ✓",detail:"조정 구간"}}},
+  {ticker:"GOOGL",name:"Alphabet",sector:"광고/AI/클라우드",roic:32.5,peg:1.2,moat:"네트워크+데이터",score:91,phase:"진입 가능",buyPct:9,successProb:80,targetPrice:230,currentPrice:193,reason:"PEG 1.2x — 빅테크 중 가장 저평가. Google Cloud 28% 성장.",counter:"AI 검색 자기잠식. DOJ 반독점 소송.",history:[185,189,183,195,191,196,193],radar:[88,85,92,82,80],phil:{quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 32.5%, 검색 독점"},discount:{pass:true,label:"디스카운트 ✓",detail:"AI 자기잠식 우려 과대"},price:{pass:true,label:"가격 ✓",detail:"PEG 1.2x — 빅테크 최저"},macro:{pass:true,label:"매크로 ✓",detail:"클라우드+AI 전환 수혜"},timing:{pass:true,label:"타이밍 ✓",detail:"52주 저점 근처"}}},
+  {ticker:"V",name:"Visa",sector:"금융 네트워크",roic:44.8,peg:1.5,moat:"네트워크효과",score:89,phase:"보유 유지",buyPct:7,successProb:75,targetPrice:320,currentPrice:285,reason:"글로벌 결제 네트워크 독점. ROIC 44.8%. 인플레이션 자동 헤지.",counter:"핀테크 경쟁(Stripe, Block). 수수료 규제 리스크.",history:[278,282,279,288,283,290,285],radar:[90,75,80,85,78],phil:{quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 44.8%, 결제 독점"},discount:{pass:true,label:"디스카운트 ✓",detail:"핀테크 위협 과대"},price:{pass:true,label:"가격 ✓",detail:"PEG 1.5x"},macro:{pass:true,label:"매크로 ✓",detail:"디지털 결제 성장"},timing:{pass:false,label:"타이밍 △",detail:"BB 중립"}}},
+  {ticker:"COST",name:"Costco",sector:"유통",roic:28.1,peg:2.8,moat:"원가우위+브랜드",score:78,phase:"고평가 주의",buyPct:0,successProb:45,targetPrice:900,currentPrice:975,reason:"멤버십 해자. 경기 방어적.",counter:"PEG 2.8x — 과대평가. 목표가 현재가 하회.",history:[955,962,970,958,980,968,975],radar:[80,40,35,75,45],phil:{quality:{pass:true,label:"퀄리티 ✓",detail:"ROIC 28.1%"},discount:{pass:false,label:"디스카운트 ✗",detail:"고평가"},price:{pass:false,label:"가격 ✗",detail:"PEG 2.8x"},macro:{pass:true,label:"매크로 ✓",detail:"경기 방어적"},timing:{pass:false,label:"타이밍 ✗",detail:"52주 고점"}}},
 ];
 
-function renderJournal() {
-  document.getElementById("journalBox").innerHTML = JOURNAL.map(j=>`
-    <div class="journal-card" style="margin-bottom:14px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-        <span class="badge ${j.action==="매수"?"bg":"bb"}">${j.action}</span>
-        <span style="font-size:15px;font-weight:700;">${j.name}</span>
-        <span style="font-size:11px;color:var(--muted);">${j.ticker}</span>
-        <span style="font-size:11px;color:var(--muted);margin-left:auto;">${j.date}</span>
-      </div>
-      <div class="g2" style="margin-bottom:12px;">
-        <div class="card-sm">
-          <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">권장 비중</div>
-          <div style="font-size:22px;font-weight:800;color:var(--accent);">${j.buyPct}%</div>
-        </div>
-        <div class="card-sm">
-          <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">성공확률</div>
-          <div style="font-size:22px;font-weight:800;color:${j.successProb>=70?"var(--green)":"var(--orange)"};">${j.successProb}%</div>
-        </div>
-      </div>
-      <div class="g2" style="margin-bottom:12px;">
-        <div style="padding:12px;background:var(--green-dim);border-radius:8px;border-left:3px solid var(--green);">
-          <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:5px;">투자 논리</div>
-          <div style="font-size:12px;line-height:1.6;">${j.reason}</div>
-        </div>
-        <div style="padding:12px;background:var(--red-dim);border-radius:8px;border-left:3px solid var(--red);">
-          <div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:5px;">반론</div>
-          <div style="font-size:12px;line-height:1.6;">${j.counter}</div>
-        </div>
-      </div>
-      <div style="font-size:12px;"><span style="color:var(--muted);">목표가: </span><span style="color:var(--accent);font-weight:700;">${j.target}</span></div>
-    </div>`).join("");
+// 채권
+function renderBonds(){
+  const bonds=[{name:"미국 10Y 국채",yield:"4.52%",change:"+0.03",up:true,signal:"금리 상승 — 신규 주식 진입 신중"},{name:"한국 3Y 국채",yield:"3.28%",change:"-0.02",up:false,signal:"안정적"},{name:"미국 2Y-10Y 스프레드",yield:"0.15%",change:"+0.05",up:true,signal:"정상화 진행 중"}];
+  const comm=[{name:"금",price:"$2,645",change:"+1.2%",up:true,signal:"안전자산 수요 상승"},{name:"WTI 원유",price:"$71.3",change:"-0.8%",up:false,signal:"공급 과잉 주의"},{name:"구리",price:"$9,120",change:"+0.5%",up:true,signal:"경기 회복 신호"}];
+  document.getElementById("bondsBox").innerHTML='<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'+bonds.map(b=>'<div class="card-sm" style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:600">'+b.name+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px">'+b.signal+'</div></div><div style="text-align:right"><div style="font-size:20px;font-weight:700">'+b.yield+'</div><div style="font-size:12px;color:'+(b.up?"var(--red)":"var(--green)")+'">'+b.change+'</div></div></div>').join("")+'</div><div class="g3">'+comm.map(c=>'<div class="card"><div class="ct">'+c.name+'</div><div style="font-size:22px;font-weight:700">'+c.price+'</div><div style="font-size:13px;font-weight:600;color:'+(c.up?"var(--green)":"var(--red)")+'">'+c.change+'</div><div style="font-size:11px;color:var(--dim);margin-top:6px">'+c.signal+'</div></div>').join("")+'</div>';
 }
 
-// ── AI 채팅 ───────────────────────────────────────────────────
-async function sendChat() {
-  if(chatBusy) return;
-  const inp = document.getElementById("chatIn");
-  const msg = inp.value.trim(); if(!msg) return;
-  inp.value=""; addMsg(msg,"u"); chatBusy=true;
-  const loading = addMsg("분석 중...","a");
+// 투자 일지
+const JOURNAL=[
+  {date:"2026-02-25",ticker:"005930",name:"삼성전자",action:"매수",reason:"자사주 매입 공시 + ROE 18% + PBR 1.1. BB 하단 접근. Draft 3.0 5/5 통과.",counter:"메모리 사이클 피크아웃. 중국 CXMT 추격.",target:"₩82,000",buyPct:8,successProb:78},
+  {date:"2026-02-20",ticker:"MSFT",name:"Microsoft",action:"보유유지",reason:"ROIC 42%, Azure AI 성장. PEG 1.8. Draft 3.0 5/5.",counter:"Valuation 부담. OpenAI 의존도.",target:"$480",buyPct:10,successProb:82},
+];
+function renderJournal(){
+  document.getElementById("journalBox").innerHTML=JOURNAL.map(j=>'<div class="journal-card card" style="margin-bottom:14px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span class="badge '+(j.action==="매수"?"bg":"bb")+'">'+j.action+'</span><span style="font-size:15px;font-weight:700">'+j.name+'</span><span style="font-size:11px;color:var(--muted)">'+j.ticker+'</span><span style="font-size:11px;color:var(--muted);margin-left:auto">'+j.date+'</span></div><div class="g2" style="margin-bottom:12px"><div class="card-sm"><div style="font-size:9px;color:var(--muted);margin-bottom:4px">권장 비중</div><div style="font-size:22px;font-weight:800;color:var(--accent)">'+j.buyPct+'%</div></div><div class="card-sm"><div style="font-size:9px;color:var(--muted);margin-bottom:4px">성공확률</div><div style="font-size:22px;font-weight:800;color:'+(j.successProb>=70?"var(--green)":"var(--orange)")+'">'+j.successProb+'%</div></div></div><div class="g2" style="margin-bottom:12px"><div style="padding:12px;background:var(--green-dim);border-radius:8px;border-left:3px solid var(--green)"><div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:5px">투자 논리</div><div style="font-size:12px;line-height:1.6">'+j.reason+'</div></div><div style="padding:12px;background:var(--red-dim);border-radius:8px;border-left:3px solid var(--red)"><div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:5px">반론</div><div style="font-size:12px;line-height:1.6">'+j.counter+'</div></div></div><div style="font-size:12px"><span style="color:var(--muted)">목표가: </span><span style="color:var(--accent);font-weight:700">'+j.target+'</span></div></div>').join("");
+}
 
+// 바이어스 체크리스트
+const BIASES=[
+  {id:"b1",bias:"확증 편향",q:"매수 전 반론 3가지를 먼저 작성했는가?",warn:"NO면 매수 금지 — 반론부터 써라"},
+  {id:"b2",bias:"과신 편향",q:"내가 기관투자자보다 더 많은 정보를 갖고 있다고 생각하는가?",warn:"YES면 경계 — 겸손해질 것"},
+  {id:"b3",bias:"손실 회피",q:"손실 중인 종목을 '언젠가 오르겠지'로 보유 중인가?",warn:"YES면 투자 논리 재검토 필요"},
+  {id:"b4",bias:"앵커링",q:"매수가에 집착해 현재 펀더멘탈을 무시하고 있지 않은가?",warn:"YES면 매수가 잊고 현재가치 재평가"},
+  {id:"b5",bias:"군중 심리",q:"이 종목을 SNS·리딩방이 추천해서 관심 갖게 됐는가?",warn:"YES면 독립적 분석 먼저"},
+  {id:"b6",bias:"최신 편향",q:"최근 주가 상승만 보고 미래도 오를 것이라 가정하는가?",warn:"YES면 밸류에이션 재확인"},
+  {id:"b7",bias:"처분 효과",q:"수익 중인 좋은 주식을 너무 빨리 팔고 싶은 충동이 있는가?",warn:"YES면 목표가까지 보유 계획 재검토"},
+  {id:"b8",bias:"복잡성 회피",q:"이 기업의 사업보고서를 직접 읽어봤는가?",warn:"NO면 매수 금지 — 직접 읽을 것"},
+];
+function renderBias(){
+  document.getElementById("biasBox").innerHTML=BIASES.map(b=>'<div class="bias-item"><input type="checkbox" id="'+b.id+'" onchange="updateBias()" style="margin-top:2px;accent-color:var(--accent);width:16px;height:16px;cursor:pointer;flex-shrink:0"><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px"><span class="badge bp" style="font-size:9px">'+b.bias+'</span><span style="font-size:12px;font-weight:600">'+b.q+'</span></div><div style="font-size:10px;color:var(--orange)">⚠️ '+b.warn+'</div></div></div>').join("");
+}
+function updateBias(){
+  const checked=BIASES.filter(b=>document.getElementById(b.id)&&document.getElementById(b.id).checked).length;
+  const pct=Math.round(checked/BIASES.length*100);
+  const col=pct>=75?"var(--green)":pct>=50?"var(--orange)":"var(--red)";
+  const msg=pct>=75?"✅ 바이어스 인식 양호 — 매수 검토 가능":pct>=50?"⚠️ 일부 미확인 — 신중하게":pct>=25?"🔴 체크 부족 — 매수 보류":"🚫 미확인 — 매수 금지";
+  document.getElementById("biasResult").innerHTML='<span style="color:'+col+';font-weight:700">'+msg+'</span><br><span style="font-size:11px;color:var(--dim)">'+checked+'/'+BIASES.length+'개 확인 완료</span>';
+}
+
+// AI
+async function sendChat(){
+  if(chatBusy)return;
+  const inp=document.getElementById("chatIn");
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value="";addMsg(msg,"u");chatBusy=true;
+  const loading=addMsg("분석 중...","a");
   let dartCtx="";
-  try {
-    const r = await fetch(`${BACKEND}/dart/recent?days=7`);
-    const j = await r.json();
-    dartCtx = (j.data||[]).slice(0,5).map(d=>`${d.company}: ${d.title} (${d.date})`).join("\n");
-  } catch {}
-
-  const sys = `당신은 Andrew의 투자 분석 AI입니다. Draft 3.0 철학(버핏 가치투자+하워드 막스 사이클+카너먼 행동경제학) 기반으로 분석합니다.
-
-오늘 DART 공시:
-${dartCtx||"없음"}
-
-국장 분석 대상: 삼성전자(92점,매수8%,성공78%), SK하이닉스(88점,매수7%,성공74%), 삼성SDI(85점,매수5%,성공68%)
-미장 분석 대상: MSFT(94점,매수10%,성공82%), GOOGL(91점,매수9%,성공80%), AAPL(90점,매수8%,성공76%)
-
-답변 형식:
-■ 요약
-■ Draft 3.0 체크 (퀄리티/디스카운트/가격/매크로/타이밍)
-■ 투자 논리
-■ 반론 (왜 틀릴 수 있나)
-■ 결론 및 권장 비중
-
-한국어, 간결하게.`;
-
-  try {
-    const r = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sys,messages:[{role:"user",content:msg}]})});
-    const d = await r.json();
-    loading.textContent = d.content?.[0]?.text||"응답 오류";
-  } catch {
-    loading.textContent = "AI 응답 오류 — 다시 시도해주세요.";
-  }
+  try{const r=await fetch(BACKEND+"/dart/recent?days=7");const j=await r.json();dartCtx=(j.data||[]).slice(0,5).map(d=>d.company+": "+d.title+" ("+d.date+")").join("\n");}catch{}
+  const sys="당신은 Andrew의 투자 분석 AI입니다. Draft 3.0 철학(버핏+하워드 막스+카너먼) 기반.\n\n오늘 DART 공시:\n"+(dartCtx||"없음")+"\n\n국장: 삼성전자(92점,8%,78%), SK하이닉스(88점,7%,74%), 삼성SDI(85점,5%,68%)\n미장: MSFT(94점,10%,82%), GOOGL(91점,9%,80%), AAPL(90점,8%,76%)\n\n답변형식: ■요약 ■Draft3.0체크 ■투자논리 ■반론 ■결론. 한국어 간결하게.";
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sys,messages:[{role:"user",content:msg}]})});
+    const d=await r.json();
+    loading.textContent=d.content&&d.content[0]?d.content[0].text:"응답 오류";
+  }catch{loading.textContent="AI 응답 오류 — 다시 시도해주세요.";}
   chatBusy=false;
 }
-
-function addMsg(text, role) {
-  const d = document.createElement("div");
-  d.className = `msg msg-${role}`;
-  d.textContent = text;
-  const c = document.getElementById("chat-msgs");
-  c.appendChild(d);
-  c.scrollTop = c.scrollHeight;
-  return d;
+function addMsg(text,role){
+  const d=document.createElement("div");d.className="msg msg-"+role;d.textContent=text;
+  const c=document.getElementById("chat-msgs");c.appendChild(d);c.scrollTop=c.scrollHeight;return d;
 }
 
-// ── 투자 철학 ─────────────────────────────────────────────────
-const BIASES = [
-  {id:"b1", bias:"확증 편향", q:"매수 전 반론 3가지를 먼저 작성했는가?", warn:"NO면 매수 금지 — 반론부터 써라"},
-  {id:"b2", bias:"과신 편향", q:"내가 기관투자자보다 더 많은 정보를 갖고 있다고 생각하는가?", warn:"YES면 경계 — 겸손해질 것"},
-  {id:"b3", bias:"손실 회피", q:"손실 중인 종목을 '언젠가 오르겠지'로 보유 중인가?", warn:"YES면 투자 논리 재검토 필요"},
-  {id:"b4", bias:"앵커링", q:"매수가에 집착해 현재 펀더멘탈을 무시하고 있지 않은가?", warn:"YES면 매수가 잊고 현재가치 재평가"},
-  {id:"b5", bias:"군중 심리", q:"이 종목을 주변(SNS·리딩방)이 추천해서 관심 갖게 됐는가?", warn:"YES면 독립적 분석 먼저"},
-  {id:"b6", bias:"최신 편향", q:"최근 주가 상승만 보고 미래도 오를 것이라 가정하는가?", warn:"YES면 밸류에이션 재확인"},
-  {id:"b7", bias:"처분 효과", q:"수익 중인 좋은 주식을 너무 빨리 팔고 싶은 충동이 있는가?", warn:"YES면 목표가까지 보유 계획 재검토"},
-  {id:"b8", bias:"복잡성 회피", q:"이 기업의 10-K(사업보고서)를 직접 읽어봤는가?", warn:"NO면 매수 금지 — 직접 읽을 것"},
-];
-
-function renderBiasChecklist() {
-  const el = document.getElementById("biasChecklist");
-  if(!el) return;
-  el.innerHTML = BIASES.map(b=>`
-    <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
-      <input type="checkbox" id="${b.id}" onchange="updateBiasResult()" style="margin-top:2px;accent-color:var(--accent);width:16px;height:16px;cursor:pointer;flex-shrink:0;">
-      <div style="flex:1;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-          <span class="badge bp" style="font-size:9px;">${b.bias}</span>
-          <span style="font-size:12px;font-weight:600;">${b.q}</span>
-        </div>
-        <div style="font-size:10px;color:var(--orange);">⚠️ ${b.warn}</div>
-      </div>
-    </div>`).join("");
-}
-
-function updateBiasResult() {
-  const checked = BIASES.filter(b=>document.getElementById(b.id)?.checked).length;
-  const total = BIASES.length;
-  const pct = Math.round(checked/total*100);
-  const color = pct>=75?"var(--green)":pct>=50?"var(--orange)":"var(--red)";
-  const msg = pct>=75?"✅ 바이어스 인식 양호 — 매수 검토 가능":pct>=50?"⚠️ 일부 바이어스 미확인 — 신중하게":pct>=25?"🔴 바이어스 체크 부족 — 매수 보류":"🚫 바이어스 미확인 — 매수 금지";
-  document.getElementById("biasResult").innerHTML = `<span style="color:${color};font-weight:700;">${msg}</span><br><span style="font-size:11px;color:var(--dim);">${checked}/${total}개 확인 완료</span>`;
-}
-
-// ── 초기화 ────────────────────────────────────────────────────
+// 초기화
 fetchDart();
 </script>
 </body>
