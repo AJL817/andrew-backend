@@ -771,6 +771,19 @@ async def run_screener(market: str):
                     _progress[market]["done"] = min(i+50, len(tickers))
                     await asyncio.sleep(0.2)
 
+            # 3. DART 병렬 조회 (KR만, 재무 데이터 없는 종목 보완)
+            dart_data = {}
+            if market == "kr" and DART_API_KEY:
+                _progress[market]["phase"] = "DART 재무 데이터 조회 중"
+                async with httpx.AsyncClient(timeout=15) as cd:
+                    tasks = {t: dart_financials(t, cd) for t in tickers}
+                    for t, coro in tasks.items():
+                        try:
+                            dart_data[t] = await coro
+                        except:
+                            dart_data[t] = {}
+                        await asyncio.sleep(0.05)
+
             # 3. 채점
             _progress[market]["phase"] = "채점 중"
             score_fn = score_kr if market == "kr" else score_us
@@ -780,20 +793,18 @@ async def run_screener(market: str):
                     q = all_quotes.get(ticker, {})
                     if not q.get("regularMarketPrice"):
                         continue
-                    # KR 종목: DART로 빈 재무 데이터 보완
-                    if market == "kr" and DART_API_KEY:
-                        try:
-                            dart_fin = await dart_financials(ticker, c3)
-                            if dart_fin and not dart_fin.get("dart_error"):
-                                if not q.get("returnOnEquity") and dart_fin.get("dart_roe"):
-                                    q["returnOnEquity"] = dart_fin["dart_roe"] / 100
-                                if not q.get("debtToEquity") and dart_fin.get("dart_debt_ratio"):
-                                    q["debtToEquity"] = dart_fin["dart_debt_ratio"]
-                                if not q.get("operatingMargins") and dart_fin.get("dart_op_margin"):
-                                    q["operatingMargins"] = dart_fin["dart_op_margin"] / 100
-                                if not q.get("returnOnAssets") and dart_fin.get("dart_roa"):
-                                    q["returnOnAssets"] = dart_fin["dart_roa"] / 100
-                        except: pass
+                    # KR 종목: DART 데이터로 빈 값 보완
+                    if market == "kr" and ticker in dart_data:
+                        dart_fin = dart_data[ticker]
+                        if dart_fin and not dart_fin.get("dart_error"):
+                            if not q.get("returnOnEquity") and dart_fin.get("dart_roe"):
+                                q["returnOnEquity"] = dart_fin["dart_roe"] / 100
+                            if not q.get("debtToEquity") and dart_fin.get("dart_debt_ratio"):
+                                q["debtToEquity"] = dart_fin["dart_debt_ratio"]
+                            if not q.get("operatingMargins") and dart_fin.get("dart_op_margin"):
+                                q["operatingMargins"] = dart_fin["dart_op_margin"] / 100
+                            if not q.get("returnOnAssets") and dart_fin.get("dart_roa"):
+                                q["returnOnAssets"] = dart_fin["dart_roa"] / 100
                     score, crit = score_fn(q)
                     # 히스토리는 이미 quote에서 가져옴
                     hist = q.get("_history", [])
