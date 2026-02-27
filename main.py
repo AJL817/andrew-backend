@@ -1152,11 +1152,32 @@ KR_TICKER_TO_CORP = {
     "021240.KS":"00121600","078930.KS":"00108516","036570.KS":"00375699",
 }
 
+_dart_corp_cache: dict = {}
+
 async def dart_financials(ticker: str, client: httpx.AsyncClient) -> dict:
     """DART 사업보고서에서 ROE, 부채비율, 영업이익률 등 직접 계산"""
     if not DART_API_KEY:
         return {}
-    corp_code = KR_TICKER_TO_CORP.get(ticker, "")
+    # 캐시 확인
+    if ticker in _dart_corp_cache:
+        corp_code = _dart_corp_cache[ticker]
+    else:
+        # 하드코딩 우선, 없으면 DART company API로 자동 조회
+        corp_code = KR_TICKER_TO_CORP.get(ticker, "")
+        if not corp_code:
+            stock_code = ticker.split(".")[0]  # "251270.KQ" → "251270"
+            try:
+                r = await client.get(
+                    "https://opendart.fss.or.kr/api/company.json",
+                    params={"crtfc_key": DART_API_KEY, "stock_code": stock_code},
+                    timeout=8,
+                )
+                d = r.json()
+                if d.get("status") == "000":
+                    corp_code = d.get("corp_code", "")
+            except:
+                pass
+        _dart_corp_cache[ticker] = corp_code
     if not corp_code:
         return {}
     result = {}
