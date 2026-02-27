@@ -910,6 +910,37 @@ async def get_chart(ticker: str, range: str = "1mo", interval: str = "1d"):
         return {"status": "error", "message": str(e)}
 
 
+
+@app.get("/yf/bs/{ticker}")
+async def yf_bs_debug(ticker: str):
+    """balance sheet row 이름 확인용"""
+    import yfinance as yf
+    from concurrent.futures import ThreadPoolExecutor
+    import asyncio
+    def get_bs():
+        t = yf.Ticker(ticker)
+        result = {}
+        try:
+            bs = t.quarterly_balance_sheet
+            result["bs_rows"] = list(bs.index) if bs is not None and not bs.empty else []
+            result["bs_sample"] = {str(k): float(bs.loc[k].iloc[0]) for k in list(bs.index)[:10] if not bs.loc[k].isna().all()} if bs is not None and not bs.empty else {}
+        except Exception as e:
+            result["bs_error"] = str(e)
+        try:
+            inc = t.quarterly_income_stmt
+            result["inc_rows"] = list(inc.index) if inc is not None and not inc.empty else []
+            result["inc_sample"] = {str(k): float(inc.loc[k].iloc[0]) for k in list(inc.index)[:10] if not inc.loc[k].isna().all()} if inc is not None and not inc.empty else {}
+        except Exception as e:
+            result["inc_error"] = str(e)
+        info = t.info or {}
+        result["shares"] = info.get("sharesOutstanding")
+        result["price"]  = info.get("currentPrice") or info.get("regularMarketPrice")
+        return result
+    loop = asyncio.get_event_loop()
+    with ThreadPoolExecutor() as pool:
+        data = await loop.run_in_executor(pool, get_bs)
+    return {"ticker": ticker, "data": data}
+
 @app.get("/yf/debug/{ticker}")
 async def yf_debug(ticker: str):
     """yfinance 원본 info 필드 전체 확인"""

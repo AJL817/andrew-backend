@@ -5,83 +5,62 @@ src  = os.path.join(REPO, "main.py")
 tmp  = os.path.join(REPO, "main_new.py")
 
 with open(src, "r", encoding="utf-8") as f:
-    lines = f.readlines()
+    content = f.read()
 
-# 패치할 줄 찾기
-insert_after_pbr  = None   # "if pbr is not None and pbr <= 0: pbr = None" 줄
-insert_after_pe   = None   # 마지막 "if pe is not None and (pe <= 0 or pe > 2000): pe = None" 줄
+# balance sheet 디버그 엔드포인트 추가
+debug_endpoint = '''
+@app.get("/yf/bs/{ticker}")
+async def yf_bs_debug(ticker: str):
+    """balance sheet row 이름 확인용"""
+    import yfinance as yf
+    from concurrent.futures import ThreadPoolExecutor
+    import asyncio
+    def get_bs():
+        t = yf.Ticker(ticker)
+        result = {}
+        try:
+            bs = t.quarterly_balance_sheet
+            result["bs_rows"] = list(bs.index) if bs is not None and not bs.empty else []
+            result["bs_sample"] = {str(k): float(bs.loc[k].iloc[0]) for k in list(bs.index)[:10] if not bs.loc[k].isna().all()} if bs is not None and not bs.empty else {}
+        except Exception as e:
+            result["bs_error"] = str(e)
+        try:
+            inc = t.quarterly_income_stmt
+            result["inc_rows"] = list(inc.index) if inc is not None and not inc.empty else []
+            result["inc_sample"] = {str(k): float(inc.loc[k].iloc[0]) for k in list(inc.index)[:10] if not inc.loc[k].isna().all()} if inc is not None and not inc.empty else {}
+        except Exception as e:
+            result["inc_error"] = str(e)
+        info = t.info or {}
+        result["shares"] = info.get("sharesOutstanding")
+        result["price"]  = info.get("currentPrice") or info.get("regularMarketPrice")
+        return result
+    loop = asyncio.get_event_loop()
+    with ThreadPoolExecutor() as pool:
+        data = await loop.run_in_executor(pool, get_bs)
+    return {"ticker": ticker, "data": data}
 
-for i, line in enumerate(lines):
-    s = line.strip()
-    if s == "if pbr is not None and pbr <= 0: pbr = None":
-        insert_after_pbr = i
-    if s == "if pe is not None and (pe <= 0 or pe > 2000): pe = None":
-        insert_after_pe = i
-
-print(f"PBR 삽입 위치: {insert_after_pbr}, PER 삽입 위치: {insert_after_pe}")
-
-pbr_patch = '''\
-        # 국장 fallback: balance sheet에서 총자본 직접 계산
-        if (pbr is None or pbr <= 0) and is_kr:
-            try:
-                shares = g("sharesOutstanding")
-                bs = t.quarterly_balance_sheet
-                if bs is not None and not bs.empty:
-                    equity_row = None
-                    for row_key in ["Stockholders Equity","Total Equity Gross Minority Interest",
-                                    "Common Stock Equity","Total Stockholders Equity"]:
-                        if row_key in bs.index:
-                            equity_row = float(bs.loc[row_key].iloc[0])
-                            break
-                    if equity_row and equity_row > 0 and shares and shares > 0:
-                        bv_per_share = equity_row / shares
-                        if bv_per_share > 0 and price and price > 0:
-                            pbr = round(price / bv_per_share, 3)
-            except: pass
 '''
 
-pe_patch = '''\
-        # 국장 fallback: income statement TTM 합산으로 EPS 직접 계산
-        if (pe is None or pe <= 0 or pe > 2000) and is_kr:
-            try:
-                shares = g("sharesOutstanding")
-                inc = t.quarterly_income_stmt
-                if inc is not None and not inc.empty:
-                    net_income = None
-                    for row_key in ["Net Income","Net Income Common Stockholders",
-                                    "Net Income From Continuing Operations"]:
-                        if row_key in inc.index:
-                            vals = [float(v) for v in inc.loc[row_key].dropna().values[:4]]
-                            if vals:
-                                net_income = sum(vals)
-                                break
-                    if net_income and net_income > 0 and shares and shares > 0:
-                        eps_calc = net_income / shares
-                        if eps_calc > 0 and price and price > 0:
-                            pe = round(price / eps_calc, 2)
-            except: pass
-'''
-
-if insert_after_pbr is not None and insert_after_pe is not None:
-    # pe 먼저 삽입 (뒤에서부터 해야 인덱스 안 밀림)
-    lines.insert(insert_after_pe + 1, pe_patch)
-    lines.insert(insert_after_pbr + 1, pbr_patch)
-    print("✅ PBR/PER fallback 패치 적용됨")
+# /yf/debug 엔드포인트 앞에 삽입
+marker = '@app.get("/yf/debug/{ticker}")'
+if marker in content and "/yf/bs/" not in content:
+    content = content.replace(marker, debug_endpoint + marker)
+    print("✅ 디버그 엔드포인트 추가됨")
 else:
-    print("⚠️  패치 위치를 찾지 못했어요. 줄 번호를 확인하세요.")
+    print("⚠️  이미 있거나 위치 못찾음")
 
 with open(tmp, "w", encoding="utf-8") as f:
-    f.writelines(lines)
+    f.write(content)
 os.replace(tmp, src)
-print("✅ main.py 저장 완료")
+print("✅ main.py 저장")
 
 for cmd in [
     ["git", "-C", REPO, "add", "-A"],
-    ["git", "-C", REPO, "commit", "-m", "fix: KR PBR/PER balance sheet fallback"],
+    ["git", "-C", REPO, "commit", "-m", "debug: balance sheet row names for KR stocks"],
     ["git", "-C", REPO, "push"],
 ]:
     r = subprocess.run(cmd, capture_output=True, text=True)
     out = (r.stdout + r.stderr).strip()
     if out: print(out)
 
-print("🚀 배포 완료!")
+print("🚀 완료! 배포 후: https://andrew-backend-production.up.railway.app/yf/bs/005930.KS")
