@@ -226,4 +226,9 @@ async def shutdown():
 
 @app.get("/")
 def root():
-    return {"status": "running", "docs": "http://localhost:8000/docs"}
+    return {"status": "running"}
+
+@app.get("/app")
+async def serve_app():
+    from fastapi.responses import FileResponse
+    return FileResponse("andrew.html", media_type="text/html")
