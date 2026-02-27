@@ -171,6 +171,7 @@ tr:hover td { background:var(--surface2); }
     <button class="nb" onclick="go('bonds')" id="nav-bonds"><span class="ni">◆</span>채권·원자재</button>
     <button class="nb" onclick="go('journal')" id="nav-journal"><span class="ni">✎</span>투자 일지</button>
     <button class="nb" onclick="go('ai')" id="nav-ai"><span class="ni">⬡</span>AI 분석</button>
+    <button class="nb" onclick="go('phil')" id="nav-phil"><span class="ni">📖</span>투자 철학</button>
   </nav>
   <div class="sf">
     Draft 3.0 투자 철학<br>
@@ -282,6 +283,145 @@ tr:hover td { background:var(--surface2); }
       <div id="journalBox"></div>
     </div>
 
+    <!-- ── 투자 철학 ── -->
+    <div class="tp" id="tab-phil">
+      <div class="section-title" style="margin-bottom:4px;">📖 Draft 3.0 투자 철학</div>
+      <div class="section-sub" style="margin-bottom:20px;">버핏 가치투자 × 하워드 막스 사이클 × 카너먼 행동경제학</div>
+
+      <!-- 핵심 원칙 3줄 요약 -->
+      <div class="g3">
+        <div class="card" style="border-left:3px solid var(--accent);">
+          <div style="font-size:22px;margin-bottom:8px;">🏰</div>
+          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px;">워런 버핏</div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.7;">좋은 기업을 적정가에. ROE·해자·장기보유. 이해하지 못하는 기업은 투자하지 않는다.</div>
+        </div>
+        <div class="card" style="border-left:3px solid var(--blue);">
+          <div style="font-size:22px;margin-bottom:8px;">🌊</div>
+          <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:6px;">하워드 막스</div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.7;">사이클을 인식하라. 공포일 때 사고 탐욕일 때 팔아라. 리스크는 수익률이 아니라 손실 가능성이다.</div>
+        </div>
+        <div class="card" style="border-left:3px solid var(--purple);">
+          <div style="font-size:22px;margin-bottom:8px;">🧠</div>
+          <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px;">다니엘 카너먼</div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.7;">내 판단은 항상 편향되어 있다. 매수 전 반드시 반론을 먼저 써라. 시스템 2로 결정하라.</div>
+        </div>
+      </div>
+
+      <!-- 국장 vs 미장 기준 -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🇰🇷 국장 vs 🇺🇸 미장 — 각각의 투자 기준</div>
+        <div class="g2">
+          <div class="card">
+            <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:14px;">🇰🇷 국장 기준</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              ${[
+                {num:"1",title:"기업 퀄리티",desc:"ROE ≥ 15% (지속 가능), 명확한 경제적 해자 (원가우위·전환비용·네트워크), 부채비율 60% 이하"},
+                {num:"2",title:"코리아 디스카운트 필터",desc:"저평가 원인 분류: ① 일시적 악재(매수 대상) ② 구조적 문제(제외) ③ 지배구조 문제(제외)"},
+                {num:"3",title:"가격 필터",desc:"PBR 업종 평균 이하, EV/EBIT 10x 이하, 역사적 저점 근처"},
+                {num:"4",title:"매크로 인식",desc:"금리 사이클 확인, 공포·탐욕 지수 30 이하에서 집중 매수"},
+                {num:"5",title:"볼린저 밴드 타이밍",desc:"BB 하단 접근 or Squeeze 후 방향 확인 시 진입. 상단 접근 시 비중 축소"},
+              ].map(s=>`
+                <div style="display:flex;gap:10px;align-items:flex-start;">
+                  <span style="min-width:22px;height:22px;background:var(--blue-dim);color:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${s.num}</span>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--text);">${s.title}</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5;">${s.desc}</div></div>
+                </div>`).join("")}
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:14px;">🇺🇸 미장 기준</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              ${[
+                {num:"1",title:"ROIC > WACC",desc:"ROIC 30% 이상. 자본을 효율적으로 사용해 지속적 초과수익 창출 능력"},
+                {num:"2",title:"해자 강도",desc:"브랜드·네트워크·전환비용·원가우위 중 2개 이상. 10년 후에도 해자가 유지될 수 있는가"},
+                {num:"3",title:"PEG & 성장",desc:"PEG ≤ 2.0. 성장률 대비 밸류에이션 합리적. 장기 성장 구조(10년 테마) 확인"},
+                {num:"4",title:"환율 원칙",desc:"원/달러 높을 때(1,300↑) 환전 비중 축소. 낮을 때(1,200↓) 환전 확대. 환율도 수익률"},
+                {num:"5",title:"분산 & 보유기간",desc:"개별 종목 최대 15%. 최소 3~5년 보유 전제. 단기 변동성에 팔지 않는다"},
+              ].map(s=>`
+                <div style="display:flex;gap:10px;align-items:flex-start;">
+                  <span style="min-width:22px;height:22px;background:var(--green-dim);color:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${s.num}</span>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--text);">${s.title}</div><div style="font-size:11px;color:var(--dim);margin-top:2px;line-height:1.5;">${s.desc}</div></div>
+                </div>`).join("")}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8단계 의사결정 프레임워크 -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">⚙️ 매수 전 8단계 의사결정 프레임워크</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${[
+            {n:"1",title:"기업 이해",q:"이 기업이 어떻게 돈을 버는지 10초 안에 설명할 수 있는가?",color:"var(--accent)"},
+            {n:"2",title:"해자 확인",q:"5년 후에도 이 경쟁우위가 유지될 것인가? 위협 요인은 무엇인가?",color:"var(--accent)"},
+            {n:"3",title:"재무 퀄리티",q:"ROE(국장 ≥15%) / ROIC(미장 ≥30%) 기준 충족? 부채는 감당 가능한가?",color:"var(--blue)"},
+            {n:"4",title:"저평가 원인",q:"왜 지금 저평가인가? 일시적 악재인가, 구조적 문제인가?",color:"var(--blue)"},
+            {n:"5",title:"안전마진",q:"현재 가격에서 충분한 안전마진이 있는가? (최소 20~30% 업사이드)",color:"var(--green)"},
+            {n:"6",title:"매크로 체크",q:"현재 금리·사이클·공포탐욕지수 고려 시 지금이 매수 적기인가?",color:"var(--green)"},
+            {n:"7",title:"반론 작성",q:"내가 왜 틀릴 수 있는가? 반론 3가지를 먼저 써라. 반론이 치명적이면 투자 금지.",color:"var(--orange)"},
+            {n:"8",title:"포지션 사이징",q:"확신 정도에 따라 비중 결정 (3~15%). 한 종목 최대 15% 초과 금지.",color:"var(--purple)"},
+          ].map(s=>`
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+              <span style="min-width:28px;height:28px;background:${s.color};opacity:0.15;color:var(--text);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;filter:brightness(4);">${s.n}</span>
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="font-size:12px;font-weight:700;color:${s.color};">${s.n}단계 — ${s.title}</div>
+                <div style="font-size:12px;color:var(--dim);line-height:1.5;">${s.q}</div>
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>
+
+      <!-- 금지 원칙 -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🚫 절대 하지 말아야 할 것 — 금지 원칙</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${[
+            {icon:"❌",title:"이해 못한 기업 투자",desc:"유튜브·리딩방 추천만 보고 투자. 기업의 수익 구조를 모른 채 매수."},
+            {icon:"❌",title:"몰빵",desc:"한 종목 15% 초과 금지. 확신이 강해도 포지션 한도 준수."},
+            {icon:"❌",title:"손실 평균 매수 (무지성)",desc:"구조적 문제가 있는 종목에 물타기. 하락 이유를 먼저 분석할 것."},
+            {icon:"❌",title:"뉴스·단기 감정 매매",desc:"공시 직후 감정적 즉각 매수/매도. 최소 24시간 냉각 후 결정."},
+            {icon:"❌",title:"목표가 없는 매수",desc:"언제 팔지 모른 채 사는 것. 매수 전 목표가·손절가 반드시 설정."},
+            {icon:"❌",title:"사이클 무시",desc:"탐욕 구간(VIX 낮음·고점 근처)에서 신규 대량 진입."},
+            {icon:"❌",title:"확증 편향 조사",desc:"매수 결정 후 내 의견을 지지하는 자료만 찾는 것. 반론 먼저."},
+            {icon:"❌",title:"레버리지·빚투",desc:"대출·신용으로 주식 매수 절대 금지. 수면을 방해하는 포지션은 틀린 포지션."},
+          ].map(s=>`
+            <div style="padding:12px 14px;background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);border-radius:10px;">
+              <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px;">${s.icon} ${s.title}</div>
+              <div style="font-size:11px;color:var(--dim);line-height:1.5;">${s.desc}</div>
+            </div>`).join("")}
+        </div>
+      </div>
+
+      <!-- 행동경제학 바이어스 체크리스트 -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🧠 매수 전 바이어스 체크리스트</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:12px;">매수 버튼 누르기 전 아래 질문에 솔직하게 답해보세요.</div>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="biasChecklist"></div>
+        <div style="margin-top:14px;padding:12px 16px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--accent);">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">체크리스트 결과</div>
+          <div style="font-size:12px;color:var(--dim);" id="biasResult">체크박스를 선택하면 결과가 나옵니다.</div>
+        </div>
+      </div>
+
+      <!-- 명언 모음 -->
+      <div class="card">
+        <div style="font-size:14px;font-weight:700;margin-bottom:14px;">💬 투자 결정 전 읽는 명언</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${[
+            {quote:"남들이 탐욕스러울 때 두려워하고, 남들이 두려워할 때 탐욕스러워져라.",who:"워런 버핏"},
+            {quote:"투자에서 가장 위험한 말은 '이번엔 다르다'이다.",who:"존 템플턴"},
+            {quote:"리스크는 자신이 무엇을 하는지 모를 때 발생한다.",who:"워런 버핏"},
+            {quote:"시장은 단기적으로 투표 기계이고, 장기적으로 저울이다.",who:"벤저민 그레이엄"},
+            {quote:"가장 중요한 투자는 자기 자신에 대한 투자다.",who:"워런 버핏"},
+            {quote:"성공한 투자자는 모든 결정에서 반론을 먼저 쓴다.",who:"Draft 3.0"},
+          ].map(q=>`
+            <div style="padding:12px 16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--accent);">
+              <div style="font-size:13px;color:var(--text);font-style:italic;line-height:1.6;">"${q.quote}"</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:6px;">— ${q.who}</div>
+            </div>`).join("")}
+        </div>
+      </div>
+    </div>
+
     <!-- ── AI 분석 ── -->
     <div class="tp" id="tab-ai">
       <div class="section-title" style="margin-bottom:16px;">⬡ AI 종목 분석 — Draft 3.0 기반</div>
@@ -300,7 +440,7 @@ tr:hover td { background:var(--surface2); }
 </div>
 
 <script>
-const BACKEND = "";
+const BACKEND = "https://andrew-backend-production.up.railway.app";
 let dartData = [], activeFilter = "전체", chatBusy = false;
 let krSelected = null, usSelected = null;
 
@@ -334,7 +474,7 @@ function go(id) {
   if(id==="kr") renderKR();
   if(id==="us") renderUS();
   if(id==="bonds") renderBonds();
-  if(id==="journal") renderJournal();
+  if(id==="phil") renderBiasChecklist();
 }
 
 // ── 게이지 ────────────────────────────────────────────────────
@@ -1038,6 +1178,43 @@ function addMsg(text, role) {
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
   return d;
+}
+
+// ── 투자 철학 ─────────────────────────────────────────────────
+const BIASES = [
+  {id:"b1", bias:"확증 편향", q:"매수 전 반론 3가지를 먼저 작성했는가?", warn:"NO면 매수 금지 — 반론부터 써라"},
+  {id:"b2", bias:"과신 편향", q:"내가 기관투자자보다 더 많은 정보를 갖고 있다고 생각하는가?", warn:"YES면 경계 — 겸손해질 것"},
+  {id:"b3", bias:"손실 회피", q:"손실 중인 종목을 '언젠가 오르겠지'로 보유 중인가?", warn:"YES면 투자 논리 재검토 필요"},
+  {id:"b4", bias:"앵커링", q:"매수가에 집착해 현재 펀더멘탈을 무시하고 있지 않은가?", warn:"YES면 매수가 잊고 현재가치 재평가"},
+  {id:"b5", bias:"군중 심리", q:"이 종목을 주변(SNS·리딩방)이 추천해서 관심 갖게 됐는가?", warn:"YES면 독립적 분석 먼저"},
+  {id:"b6", bias:"최신 편향", q:"최근 주가 상승만 보고 미래도 오를 것이라 가정하는가?", warn:"YES면 밸류에이션 재확인"},
+  {id:"b7", bias:"처분 효과", q:"수익 중인 좋은 주식을 너무 빨리 팔고 싶은 충동이 있는가?", warn:"YES면 목표가까지 보유 계획 재검토"},
+  {id:"b8", bias:"복잡성 회피", q:"이 기업의 10-K(사업보고서)를 직접 읽어봤는가?", warn:"NO면 매수 금지 — 직접 읽을 것"},
+];
+
+function renderBiasChecklist() {
+  const el = document.getElementById("biasChecklist");
+  if(!el) return;
+  el.innerHTML = BIASES.map(b=>`
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <input type="checkbox" id="${b.id}" onchange="updateBiasResult()" style="margin-top:2px;accent-color:var(--accent);width:16px;height:16px;cursor:pointer;flex-shrink:0;">
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+          <span class="badge bp" style="font-size:9px;">${b.bias}</span>
+          <span style="font-size:12px;font-weight:600;">${b.q}</span>
+        </div>
+        <div style="font-size:10px;color:var(--orange);">⚠️ ${b.warn}</div>
+      </div>
+    </div>`).join("");
+}
+
+function updateBiasResult() {
+  const checked = BIASES.filter(b=>document.getElementById(b.id)?.checked).length;
+  const total = BIASES.length;
+  const pct = Math.round(checked/total*100);
+  const color = pct>=75?"var(--green)":pct>=50?"var(--orange)":"var(--red)";
+  const msg = pct>=75?"✅ 바이어스 인식 양호 — 매수 검토 가능":pct>=50?"⚠️ 일부 바이어스 미확인 — 신중하게":pct>=25?"🔴 바이어스 체크 부족 — 매수 보류":"🚫 바이어스 미확인 — 매수 금지";
+  document.getElementById("biasResult").innerHTML = `<span style="color:${color};font-weight:700;">${msg}</span><br><span style="font-size:11px;color:var(--dim);">${checked}/${total}개 확인 완료</span>`;
 }
 
 // ── 초기화 ────────────────────────────────────────────────────
