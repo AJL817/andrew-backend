@@ -1200,7 +1200,7 @@ async def briefing_weekend():
 # ── 루트 / 앱 서빙 ───────────────────────────────────────────
 @app.get("/")
 def root():
-    return {"status":"running","version":"4.0","chart_endpoint":True,"twelve_data":True}
+    return {"status":"running","version":"4.1","chart_endpoint":True,"twelve_data":True}
 
 @app.get("/app")
 async def serve_app():
