@@ -1202,6 +1202,37 @@ async def briefing_weekend():
 def root():
     return {"status":"running","version":"4.1","chart_endpoint":True,"twelve_data":True}
 
+
+@app.get("/manifest.json")
+async def serve_manifest():
+    from fastapi.responses import JSONResponse
+    return JSONResponse({
+        "name": "ANDREW Investment System",
+        "short_name": "ANDREW",
+        "description": "개인 투자 철학 기반 주식 스크리닝 시스템",
+        "start_url": "/app",
+        "display": "standalone",
+        "background_color": "#0a0a0a",
+        "theme_color": "#00ff88",
+        "icons": [{"src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]
+    })
+
+@app.get("/sw.js")
+async def serve_sw():
+    from fastapi.responses import Response
+    sw = b"self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});"
+    return Response(content=sw, media_type="application/javascript")
+
+@app.get("/icon.svg")
+async def serve_icon():
+    from fastapi.responses import Response
+    svg = b'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+<rect width="192" height="192" rx="40" fill="#0a0a0a"/>
+<text x="96" y="95" font-family="monospace" font-size="80" font-weight="bold" fill="#00ff88" text-anchor="middle">A</text>
+<text x="96" y="140" font-family="monospace" font-size="16" fill="#666" text-anchor="middle">ANDREW</text>
+</svg>'''
+    return Response(content=svg, media_type="image/svg+xml")
+
 @app.get("/app")
 async def serve_app():
     return FileResponse("andrew.html", media_type="text/html")
