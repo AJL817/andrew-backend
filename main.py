@@ -1181,12 +1181,16 @@ async def dart_financials(ticker: str, client: httpx.AsyncClient) -> dict:
     if not corp_code:
         return {}
     result = {}
+    # 2월 이전엔 전년도 사업보고서 미공시 → year-2 우선, 없으면 year-1
+    now = kst_now()
+    bsns_years = [str(now.year - 2), str(now.year - 1)] if now.month < 4 else [str(now.year - 1), str(now.year - 2)]
     for fs_div in ["CFS", "OFS"]:
-        try:
+        for bsns_year in bsns_years:
+          try:
             r = await client.get(
                 "https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json",
                 params={"crtfc_key": DART_API_KEY, "corp_code": corp_code,
-                        "bsns_year": str(kst_now().year - 1),
+                        "bsns_year": bsns_year,
                         "reprt_code": "11011", "fs_div": fs_div},
                 timeout=12,
             )
@@ -1194,6 +1198,7 @@ async def dart_financials(ticker: str, client: httpx.AsyncClient) -> dict:
             if d.get("status") != "000": continue
             items = d.get("list", [])
             if not items: continue
+            # 데이터 있으면 연도 루프 탈출
 
             def get_val(keywords, sj_div):
                 for item in items:

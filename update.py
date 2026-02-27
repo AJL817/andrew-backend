@@ -7,47 +7,45 @@ mtmp = os.path.join(REPO, "main.tmp")
 with open(msrc, "r", encoding="utf-8") as f:
     mc = f.read()
 
-# dart_financials 함수에서 하드코딩 없으면 DART API로 자동 조회하도록 교체
-old = '''async def dart_financials(ticker: str, client: httpx.AsyncClient) -> dict:
-    """DART 사업보고서에서 ROE, 부채비율, 영업이익률 등 직접 계산"""
-    if not DART_API_KEY:
-        return {}
-    corp_code = KR_TICKER_TO_CORP.get(ticker, "")
-    if not corp_code:
-        return {}'''
+# 핵심 버그 수정: year-1(2025) 사업보고서는 3월 전엔 없음 → year-2(2024) 우선 시도
+old = '''    result = {}
+    for fs_div in ["CFS", "OFS"]:
+        try:
+            r = await client.get(
+                "https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json",
+                params={"crtfc_key": DART_API_KEY, "corp_code": corp_code,
+                        "bsns_year": str(kst_now().year - 1),
+                        "reprt_code": "11011", "fs_div": fs_div},
+                timeout=12,
+            )'''
 
-new = '''_dart_corp_cache: dict = {}
-
-async def dart_financials(ticker: str, client: httpx.AsyncClient) -> dict:
-    """DART 사업보고서에서 ROE, 부채비율, 영업이익률 등 직접 계산"""
-    if not DART_API_KEY:
-        return {}
-    # 캐시 확인
-    if ticker in _dart_corp_cache:
-        corp_code = _dart_corp_cache[ticker]
-    else:
-        # 하드코딩 우선, 없으면 DART company API로 자동 조회
-        corp_code = KR_TICKER_TO_CORP.get(ticker, "")
-        if not corp_code:
-            stock_code = ticker.split(".")[0]  # "251270.KQ" → "251270"
-            try:
-                r = await client.get(
-                    "https://opendart.fss.or.kr/api/company.json",
-                    params={"crtfc_key": DART_API_KEY, "stock_code": stock_code},
-                    timeout=8,
-                )
-                d = r.json()
-                if d.get("status") == "000":
-                    corp_code = d.get("corp_code", "")
-            except:
-                pass
-        _dart_corp_cache[ticker] = corp_code
-    if not corp_code:
-        return {}'''
+new = '''    result = {}
+    # 2월 이전엔 전년도 사업보고서 미공시 → year-2 우선, 없으면 year-1
+    now = kst_now()
+    bsns_years = [str(now.year - 2), str(now.year - 1)] if now.month < 4 else [str(now.year - 1), str(now.year - 2)]
+    for fs_div in ["CFS", "OFS"]:
+        for bsns_year in bsns_years:
+          try:
+            r = await client.get(
+                "https://opendart.fss.or.kr/api/fnlttSinglAcntAll.json",
+                params={"crtfc_key": DART_API_KEY, "corp_code": corp_code,
+                        "bsns_year": bsns_year,
+                        "reprt_code": "11011", "fs_div": fs_div},
+                timeout=12,
+            )'''
 
 if old in mc:
     mc = mc.replace(old, new)
-    print("✅ dart_financials 동적 조회 추가")
+    # items 체크 후 break 추가
+    old2 = '''            if d.get("status") != "000": continue
+            items = d.get("list", [])
+            if not items: continue'''
+    new2 = '''            if d.get("status") != "000": continue
+            items = d.get("list", [])
+            if not items: continue
+            # 데이터 있으면 연도 루프 탈출'''
+    mc = mc.replace(old2, new2, 1)
+    print("✅ 연도 버그 수정 (year-2 우선)")
 else:
     print("❌ 패턴 없음")
 
@@ -57,7 +55,7 @@ os.replace(mtmp, msrc)
 
 for cmd in [
     ["git", "-C", REPO, "add", "-A"],
-    ["git", "-C", REPO, "commit", "-m", "fix: dart_financials dynamic corp_code via DART company API"],
+    ["git", "-C", REPO, "commit", "-m", "fix: DART use year-2 (2024) before Feb/March since 2025 reports not published yet"],
     ["git", "-C", REPO, "push"],
 ]:
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
