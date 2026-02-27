@@ -1300,6 +1300,13 @@ function renderScreenerDetail(s, market) {
           </div>
         </div>
       </div>
+      <!-- 동종 기업 비교 -->
+      <div style="margin-top:16px;">
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🏢 동종 기업 비교</div>
+        <div id="peer-table-${s.ticker.replace(/\./g,'_')}">
+          <div style="color:var(--text3);font-size:11px;">로딩 중...</div>
+        </div>
+      </div>
     </div>`;
 
   // 차트 로드
