@@ -1,34 +1,27 @@
 import subprocess, os
 
 REPO = r"C:\Users\Andrew Lee\andrew-backend"
+src  = os.path.join(REPO, "main.py")
+tmp  = os.path.join(REPO, "main_new.py")
 
-# main.py 내용을 직접 읽어서 쓰기
-src = os.path.join(REPO, "main.py")
-tmp = os.path.join(REPO, "main_new.py")
-
-# 수정된 내용 적용
 with open(src, "r", encoding="utf-8") as f:
-    content = f.read()
+    lines = f.readlines()
 
-# Fix 1: TD 환경변수 이름
-content = content.replace(
-    'TD_API_KEY         = os.getenv("TD_API_KEY", "")   # Twelve Data — twelvedata.com 에서 무료 발급',
-    'TD_API_KEY         = os.getenv("Twelve_Data", os.getenv("TD_API_KEY", ""))  # Twelve Data'
-)
+# 패치할 줄 찾기
+insert_after_pbr  = None   # "if pbr is not None and pbr <= 0: pbr = None" 줄
+insert_after_pe   = None   # 마지막 "if pe is not None and (pe <= 0 or pe > 2000): pe = None" 줄
 
-# Fix 2: PBR balance sheet fallback 삽입
-old_pbr = '''        # 국장 일부 종목: yfinance가 음수 장부가치 반환 → None 처리
-        if pbr is not None and pbr <= 0: pbr = None
+for i, line in enumerate(lines):
+    s = line.strip()
+    if s == "if pbr is not None and pbr <= 0: pbr = None":
+        insert_after_pbr = i
+    if s == "if pe is not None and (pe <= 0 or pe > 2000): pe = None":
+        insert_after_pe = i
 
-        # ── PER ────────────────────────────────────────────────
-        pe = g("trailingPE")
-        if pe is None or pe <= 0 or pe > 2000:
-            eps = g("trailingEps", "epsTrailingTwelveMonths")
-            if eps and eps > 0 and price and price > 0:
-                pe = round(price / eps, 2)
-        if pe is not None and (pe <= 0 or pe > 2000): pe = None'''
+print(f"PBR 삽입 위치: {insert_after_pbr}, PER 삽입 위치: {insert_after_pe}")
 
-new_pbr = '''        # 국장 fallback: balance sheet에서 총자본 직접 계산
+pbr_patch = '''\
+        # 국장 fallback: balance sheet에서 총자본 직접 계산
         if (pbr is None or pbr <= 0) and is_kr:
             try:
                 shares = g("sharesOutstanding")
@@ -45,14 +38,9 @@ new_pbr = '''        # 국장 fallback: balance sheet에서 총자본 직접 계
                         if bv_per_share > 0 and price and price > 0:
                             pbr = round(price / bv_per_share, 3)
             except: pass
-        if pbr is not None and pbr <= 0: pbr = None
+'''
 
-        # ── PER ────────────────────────────────────────────────
-        pe = g("trailingPE")
-        if pe is None or pe <= 0 or pe > 2000:
-            eps = g("trailingEps", "epsTrailingTwelveMonths")
-            if eps and eps > 0 and price and price > 0:
-                pe = round(price / eps, 2)
+pe_patch = '''\
         # 국장 fallback: income statement TTM 합산으로 EPS 직접 계산
         if (pe is None or pe <= 0 or pe > 2000) and is_kr:
             try:
@@ -72,24 +60,24 @@ new_pbr = '''        # 국장 fallback: balance sheet에서 총자본 직접 계
                         if eps_calc > 0 and price and price > 0:
                             pe = round(price / eps_calc, 2)
             except: pass
-        if pe is not None and (pe <= 0 or pe > 2000): pe = None'''
+'''
 
-if old_pbr in content:
-    content = content.replace(old_pbr, new_pbr)
+if insert_after_pbr is not None and insert_after_pe is not None:
+    # pe 먼저 삽입 (뒤에서부터 해야 인덱스 안 밀림)
+    lines.insert(insert_after_pe + 1, pe_patch)
+    lines.insert(insert_after_pbr + 1, pbr_patch)
     print("✅ PBR/PER fallback 패치 적용됨")
 else:
-    print("⚠️  PBR 패치 위치 못찾음 — Fix 1만 적용")
+    print("⚠️  패치 위치를 찾지 못했어요. 줄 번호를 확인하세요.")
 
-# 임시 파일로 쓴 다음 rename (파일 잠금 우회)
 with open(tmp, "w", encoding="utf-8") as f:
-    f.write(content)
-
+    f.writelines(lines)
 os.replace(tmp, src)
 print("✅ main.py 저장 완료")
 
 for cmd in [
     ["git", "-C", REPO, "add", "-A"],
-    ["git", "-C", REPO, "commit", "-m", "fix: TD env var + KR PBR/PER from balance sheet"],
+    ["git", "-C", REPO, "commit", "-m", "fix: KR PBR/PER balance sheet fallback"],
     ["git", "-C", REPO, "push"],
 ]:
     r = subprocess.run(cmd, capture_output=True, text=True)

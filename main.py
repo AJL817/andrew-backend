@@ -160,6 +160,23 @@ def yf_get_fundamentals(ticker: str) -> dict:
                             pbr = round(price / bv_per_share, 3)
             except: pass
         if pbr is not None and pbr <= 0: pbr = None
+        # 국장 fallback: balance sheet에서 총자본 직접 계산
+        if (pbr is None or pbr <= 0) and is_kr:
+            try:
+                shares = g("sharesOutstanding")
+                bs = t.quarterly_balance_sheet
+                if bs is not None and not bs.empty:
+                    equity_row = None
+                    for row_key in ["Stockholders Equity","Total Equity Gross Minority Interest",
+                                    "Common Stock Equity","Total Stockholders Equity"]:
+                        if row_key in bs.index:
+                            equity_row = float(bs.loc[row_key].iloc[0])
+                            break
+                    if equity_row and equity_row > 0 and shares and shares > 0:
+                        bv_per_share = equity_row / shares
+                        if bv_per_share > 0 and price and price > 0:
+                            pbr = round(price / bv_per_share, 3)
+            except: pass
 
         # ── PER ────────────────────────────────────────────────
         pe = g("trailingPE")
@@ -187,6 +204,25 @@ def yf_get_fundamentals(ticker: str) -> dict:
                             pe = round(price / eps_calc, 2)
             except: pass
         if pe is not None and (pe <= 0 or pe > 2000): pe = None
+        # 국장 fallback: income statement TTM 합산으로 EPS 직접 계산
+        if (pe is None or pe <= 0 or pe > 2000) and is_kr:
+            try:
+                shares = g("sharesOutstanding")
+                inc = t.quarterly_income_stmt
+                if inc is not None and not inc.empty:
+                    net_income = None
+                    for row_key in ["Net Income","Net Income Common Stockholders",
+                                    "Net Income From Continuing Operations"]:
+                        if row_key in inc.index:
+                            vals = [float(v) for v in inc.loc[row_key].dropna().values[:4]]
+                            if vals:
+                                net_income = sum(vals)
+                                break
+                    if net_income and net_income > 0 and shares and shares > 0:
+                        eps_calc = net_income / shares
+                        if eps_calc > 0 and price and price > 0:
+                            pe = round(price / eps_calc, 2)
+            except: pass
 
         # ── PEG ────────────────────────────────────────────────
         peg = g("pegRatio", "trailingPegRatio")
