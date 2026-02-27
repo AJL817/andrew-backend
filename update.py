@@ -1,95 +1,101 @@
 import subprocess, os
 
 REPO = r"C:\Users\Andrew Lee\andrew-backend"
-
-# ── main.py 패치 ──────────────────────────────────────────────
-src = os.path.join(REPO, "main.py")
-tmp = os.path.join(REPO, "main.tmp")
+src  = os.path.join(REPO, "main.py")
+tmp  = os.path.join(REPO, "main.tmp")
 
 with open(src, "r", encoding="utf-8") as f:
     content = f.read()
 
-pwa_routes = '''
-@app.get("/manifest.json")
-async def serve_manifest():
-    from fastapi.responses import JSONResponse
-    return JSONResponse({
-        "name": "ANDREW Investment System",
-        "short_name": "ANDREW",
-        "description": "개인 투자 철학 기반 주식 스크리닝 시스템",
-        "start_url": "/app",
-        "display": "standalone",
-        "background_color": "#0a0a0a",
-        "theme_color": "#00ff88",
-        "icons": [{"src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]
-    })
+changes = 0
 
-@app.get("/sw.js")
-async def serve_sw():
-    from fastapi.responses import Response
-    sw = b"self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});"
-    return Response(content=sw, media_type="application/javascript")
+# Fix 1: fetch_quote - regularMarketChangePercent 직접 사용
+old1 = '''        m   = r.json()["chart"]["result"][0]["meta"]
+        p   = m.get("regularMarketPrice") or m.get("previousClose", 0)
+        pv  = m.get("previousClose") or m.get("chartPreviousClose", p)
+        return {"price": round(p,4), "prev": round(pv,4),
+                "change_pct": round((p-pv)/pv*100 if pv else 0, 2),
+                "currency": m.get("currency","")}'''
+new1 = '''        m   = r.json()["chart"]["result"][0]["meta"]
+        p   = m.get("regularMarketPrice") or m.get("previousClose", 0)
+        pv  = m.get("previousClose") or m.get("chartPreviousClose", p)
+        chg = m.get("regularMarketChangePercent")  # Yahoo가 직접 제공하는 값 사용
+        if chg is None and pv:
+            chg = (p - pv) / pv * 100
+        return {"price": round(p,4), "prev": round(pv,4),
+                "change_pct": round(chg or 0, 2),
+                "currency": m.get("currency","")}'''
 
-@app.get("/icon.svg")
-async def serve_icon():
-    from fastapi.responses import Response
-    svg = b\'\'\'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-<rect width="192" height="192" rx="40" fill="#0a0a0a"/>
-<text x="96" y="95" font-family="monospace" font-size="80" font-weight="bold" fill="#00ff88" text-anchor="middle">A</text>
-<text x="96" y="140" font-family="monospace" font-size="16" fill="#666" text-anchor="middle">ANDREW</text>
-</svg>\'\'\'
-    return Response(content=svg, media_type="image/svg+xml")
+if old1 in content:
+    content = content.replace(old1, new1)
+    changes += 1
+    print("✅ fetch_quote 수정")
 
-'''
+# Fix 2: fetch_quote_hist - 동일하게 수정
+old2 = '''        p   = m.get("regularMarketPrice") or m.get("previousClose",0)
+        pv  = m.get("previousClose") or m.get("chartPreviousClose",p)
+        ts  = res.get("timestamp",[])
+        cl  = res.get("indicators",{}).get("quote",[{}])[0].get("close",[])
+        hist = [{"date":datetime.fromtimestamp(t).strftime("%m/%d"),"close":round(c,2)}
+                for t,c in zip(ts,cl) if c is not None][-7:]
+        return {"price":round(p,2),"prev":round(pv,2),
+                "change_pct":round((p-pv)/pv*100 if pv else 0,2),
+                "currency":m.get("currency",""),"history":hist}'''
+new2 = '''        p   = m.get("regularMarketPrice") or m.get("previousClose",0)
+        pv  = m.get("previousClose") or m.get("chartPreviousClose",p)
+        chg = m.get("regularMarketChangePercent")
+        if chg is None and pv:
+            chg = (p - pv) / pv * 100
+        ts  = res.get("timestamp",[])
+        cl  = res.get("indicators",{}).get("quote",[{}])[0].get("close",[])
+        hist = [{"date":datetime.fromtimestamp(t).strftime("%m/%d"),"close":round(c,2)}
+                for t,c in zip(ts,cl) if c is not None][-7:]
+        return {"price":round(p,2),"prev":round(pv,2),
+                "change_pct":round(chg or 0,2),
+                "currency":m.get("currency",""),"history":hist}'''
 
-if '/manifest.json' not in content:
-    content = content.replace('@app.get("/app")', pwa_routes + '@app.get("/app")')
-    print("✅ PWA 엔드포인트 추가됨")
-else:
-    print("⚠️ 이미 있음")
+if old2 in content:
+    content = content.replace(old2, new2)
+    changes += 1
+    print("✅ fetch_quote_hist 수정")
+
+# Fix 3: yf_single_quote - 동일하게 수정
+old3 = '''        price    = meta.get("regularMarketPrice") or meta.get("previousClose", 0)
+        prev     = meta.get("previousClose") or meta.get("chartPreviousClose", price)
+        chg      = round(((price - prev) / prev * 100) if prev else 0, 2)'''
+new3 = '''        price    = meta.get("regularMarketPrice") or meta.get("previousClose", 0)
+        prev     = meta.get("previousClose") or meta.get("chartPreviousClose", price)
+        _chg     = meta.get("regularMarketChangePercent")
+        chg      = round(_chg if _chg is not None else ((price - prev) / prev * 100 if prev else 0), 2)'''
+
+if old3 in content:
+    content = content.replace(old3, new3)
+    changes += 1
+    print("✅ yf_single_quote 수정")
+
+# Fix 4: /chart 엔드포인트
+old4 = '''            "change_pct": round((price - prev) / prev * 100 if prev else 0, 2),'''
+new4 = '''            "change_pct": round(meta.get("regularMarketChangePercent") or ((price - prev) / prev * 100 if prev else 0), 2),'''
+
+if old4 in content:
+    content = content.replace(old4, new4)
+    changes += 1
+    print("✅ /chart 엔드포인트 수정")
+
+print(f"\n총 {changes}개 수정")
 
 with open(tmp, "w", encoding="utf-8") as f:
     f.write(content)
 os.replace(tmp, src)
 print("✅ main.py 저장")
 
-# ── andrew.html 패치 ──────────────────────────────────────────
-hsrc = os.path.join(REPO, "andrew.html")
-htmp = os.path.join(REPO, "andrew.tmp")
-
-with open(hsrc, "r", encoding="utf-8") as f:
-    hcontent = f.read()
-
-pwa_head = '  <link rel="manifest" href="/manifest.json">\n  <meta name="theme-color" content="#00ff88">\n  <meta name="mobile-web-app-capable" content="yes">\n  <meta name="apple-mobile-web-app-title" content="ANDREW">\n'
-sw_reg   = '<script>if("serviceWorker"in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("/sw.js");});}</script>\n'
-
-changed = False
-if '<link rel="manifest"' not in hcontent:
-    hcontent = hcontent.replace('<head>', '<head>\n' + pwa_head)
-    print("✅ manifest 링크 추가")
-    changed = True
-if 'serviceWorker' not in hcontent:
-    hcontent = hcontent.replace('</body>', sw_reg + '</body>')
-    print("✅ SW 등록 추가")
-    changed = True
-
-if changed:
-    with open(htmp, "w", encoding="utf-8") as f:
-        f.write(hcontent)
-    os.replace(htmp, hsrc)
-    print("✅ andrew.html 저장")
-else:
-    print("⚠️ andrew.html 이미 수정됨")
-
-# ── git push ─────────────────────────────────────────────────
 for cmd in [
     ["git", "-C", REPO, "add", "-A"],
-    ["git", "-C", REPO, "commit", "-m", "feat: PWA manifest + SW + icon endpoints"],
+    ["git", "-C", REPO, "commit", "-m", "fix: use regularMarketChangePercent directly - 등락률 오류 수정"],
     ["git", "-C", REPO, "push"],
 ]:
     r = subprocess.run(cmd, capture_output=True, text=True)
     out = (r.stdout + r.stderr).strip()
     if out: print(out)
 
-print("\n🚀 배포 완료! 2분 후 확인:")
-print("https://andrew-backend-production.up.railway.app/manifest.json")
+print("\n🚀 배포 완료!")

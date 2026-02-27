@@ -299,7 +299,8 @@ async def yf_single_quote(ticker: str, client: httpx.AsyncClient) -> dict:
         meta = res["meta"]
         price    = meta.get("regularMarketPrice") or meta.get("previousClose", 0)
         prev     = meta.get("previousClose") or meta.get("chartPreviousClose", price)
-        chg      = round(((price - prev) / prev * 100) if prev else 0, 2)
+        _chg     = meta.get("regularMarketChangePercent")
+        chg      = round(_chg if _chg is not None else ((price - prev) / prev * 100 if prev else 0), 2)
         currency = meta.get("currency", "")
         ts   = res.get("timestamp", [])
         q    = res.get("indicators", {}).get("quote", [{}])[0]
@@ -901,7 +902,7 @@ async def get_chart(ticker: str, range: str = "1mo", interval: str = "1d"):
         return {
             "status": "ok", "ticker": ticker,
             "price": round(price, 2), "prev": round(prev, 2),
-            "change_pct": round((price - prev) / prev * 100 if prev else 0, 2),
+            "change_pct": round(meta.get("regularMarketChangePercent") or ((price - prev) / prev * 100 if prev else 0), 2),
             "currency": meta.get("currency", ""),
             "range": range, "interval": interval,
             "candles": candles,
@@ -1041,8 +1042,11 @@ async def fetch_quote(sym: str, client: httpx.AsyncClient) -> dict:
         m   = r.json()["chart"]["result"][0]["meta"]
         p   = m.get("regularMarketPrice") or m.get("previousClose", 0)
         pv  = m.get("previousClose") or m.get("chartPreviousClose", p)
+        chg = m.get("regularMarketChangePercent")  # Yahoo가 직접 제공하는 값 사용
+        if chg is None and pv:
+            chg = (p - pv) / pv * 100
         return {"price": round(p,4), "prev": round(pv,4),
-                "change_pct": round((p-pv)/pv*100 if pv else 0, 2),
+                "change_pct": round(chg or 0, 2),
                 "currency": m.get("currency","")}
     except:
         return {"price": None, "change_pct": None}
@@ -1063,12 +1067,15 @@ async def fetch_quote_hist(sym: str, client: httpx.AsyncClient) -> dict:
         m   = res["meta"]
         p   = m.get("regularMarketPrice") or m.get("previousClose",0)
         pv  = m.get("previousClose") or m.get("chartPreviousClose",p)
+        chg = m.get("regularMarketChangePercent")
+        if chg is None and pv:
+            chg = (p - pv) / pv * 100
         ts  = res.get("timestamp",[])
         cl  = res.get("indicators",{}).get("quote",[{}])[0].get("close",[])
         hist = [{"date":datetime.fromtimestamp(t).strftime("%m/%d"),"close":round(c,2)}
                 for t,c in zip(ts,cl) if c is not None][-7:]
         return {"price":round(p,2),"prev":round(pv,2),
-                "change_pct":round((p-pv)/pv*100 if pv else 0,2),
+                "change_pct":round(chg or 0,2),
                 "currency":m.get("currency",""),"history":hist}
     except:
         return {"price":None,"change_pct":None,"history":[]}
