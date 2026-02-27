@@ -16,6 +16,7 @@ app = FastAPI(title="Andrew Investment API", version="1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
