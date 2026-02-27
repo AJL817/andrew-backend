@@ -1088,9 +1088,12 @@ async def fetch_quote_hist(sym: str, client: httpx.AsyncClient) -> dict:
         cl  = res.get("indicators",{}).get("quote",[{}])[0].get("close",[])
         hist = [{"date":datetime.fromtimestamp(t).strftime("%m/%d"),"close":round(c,2)}
                 for t,c in zip(ts,cl) if c is not None][-7:]
+        sector   = info.get("sector","")
+        industry = info.get("industry","")
         return {"price":round(p,2),"prev":round(pv,2),
                 "change_pct":round(chg or 0,2),
-                "currency":m.get("currency",""),"history":hist}
+                "currency":m.get("currency",""),"history":hist,
+                "sector":sector,"industry":industry}
     except:
         return {"price":None,"change_pct":None,"history":[]}
 

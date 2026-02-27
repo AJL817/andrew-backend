@@ -311,6 +311,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
 .ai-dot { width:6px;height:6px;border-radius:50%;background:var(--accent);animation:aipulse 1s infinite; }
 @keyframes aipulse { 0%,100%{opacity:.3} 50%{opacity:1} }
 
+
+.peer-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+.peer-table th { color: var(--text3); font-weight: 600; padding: 4px 8px; text-align: left; border-bottom: 1px solid var(--border); font-size: 10px; letter-spacing: .5px; }
+.peer-table td { padding: 5px 8px; border-bottom: 1px solid var(--bg3); color: var(--text); }
+.peer-table tr.peer-self { background: rgba(0,255,136,.07); }
+.peer-table tr.peer-self td { color: var(--green); font-weight: 600; }
+.peer-table tr:hover td { background: var(--bg3); }
+.peer-rank-1 { color: var(--gold) !important; }
+
 </style>
 </head>
 <body>
@@ -1075,6 +1084,74 @@ function renderScreenerCards(stocks, market) {
       </div>
     </div>`;
   }).join('');
+}
+
+
+function renderPeerTable(s, market) {
+  const tableId = 'peer-table-' + s.ticker.replace(/\./g,'_');
+  const el = document.getElementById(tableId);
+  if (!el) return;
+
+  const cache = screenerCache[market] || [];
+  const sector = s.sector || '';
+  const industry = s.industry || '';
+
+  // 같은 industry 우선, 없으면 같은 sector
+  let peers = cache.filter(p => p.ticker !== s.ticker && p.industry && p.industry === industry);
+  if (peers.length < 3) {
+    peers = cache.filter(p => p.ticker !== s.ticker && p.sector && p.sector === sector);
+  }
+  // 최대 6개, 점수 순 정렬
+  peers = peers.sort((a,b) => b.score - a.score).slice(0, 6);
+
+  if (!peers.length) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:11px;">같은 섹터 종목이 스크리너에 없어요 (섹터: ' + (sector||'미분류') + ')</div>';
+    return;
+  }
+
+  // 현재 종목 포함해서 비교
+  const all = [s, ...peers].sort((a,b) => b.score - a.score);
+  const isKr = market === 'kr';
+
+  const fmtPrice = (p, cur) => cur === 'USD' ? '$' + Number(p).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) : Number(p).toLocaleString('ko-KR') + '원';
+  const fmtPct = v => v != null ? (v >= 0 ? '+' : '') + v.toFixed(2) + '%' : '—';
+  const fmtX = v => v != null ? v.toFixed(2) + 'x' : '—';
+  const fmtPct1 = v => v != null ? v.toFixed(1) + '%' : '—';
+
+  const cols = isKr
+    ? ['종목', '점수', '주가', '등락', 'PBR', 'PER', 'ROE', '배당']
+    : ['종목', '점수', '주가', '등락', 'PEG', 'PER', 'ROE', 'FCF'];
+
+  const rows = all.map((p, i) => {
+    const isSelf = p.ticker === s.ticker;
+    const fcfStr = p.fcf ? (Math.abs(p.fcf)>=1e9 ? '$'+(p.fcf/1e9).toFixed(0)+'B' : '$'+(p.fcf/1e6).toFixed(0)+'M') : '—';
+    const cells = isKr
+      ? [
+          `<b>${p.name}</b><br><span style="font-size:9px;color:var(--text3);">${p.ticker}</span>`,
+          `<span style="${isSelf?'':'color:var(--text2);'}">${p.score}</span>`,
+          fmtPrice(p.price, p.currency),
+          `<span style="color:${p.change_pct>0?'var(--green)':p.change_pct<0?'var(--red)':'var(--text2)'}">${fmtPct(p.change_pct)}</span>`,
+          fmtX(p.pbr), fmtX(p.pe), fmtPct1(p.roe!=null?p.roe*100:null), fmtPct1(p.div_yield!=null?p.div_yield*100:null)
+        ]
+      : [
+          `<b>${p.name}</b><br><span style="font-size:9px;color:var(--text3);">${p.ticker}</span>`,
+          `<span style="${isSelf?'':'color:var(--text2);'}">${p.score}</span>`,
+          fmtPrice(p.price, p.currency),
+          `<span style="color:${p.change_pct>0?'var(--green)':p.change_pct<0?'var(--red)':'var(--text2)'}">${fmtPct(p.change_pct)}</span>`,
+          fmtX(p.peg), fmtX(p.pe), fmtPct1(p.roe!=null?p.roe*100:null), fcfStr
+        ];
+    return `<tr class="${isSelf?'peer-self':''}">
+      ${i===0?`<td><span class="peer-rank-1">👑</span> ${cells[0]}</td>`:i===1?`<td>🥈 ${cells[0]}</td>`:i===2?`<td>🥉 ${cells[0]}</td>`:`<td>${cells[0]}</td>`}
+      ${cells.slice(1).map(c=>`<td>${c}</td>`).join('')}
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div style="font-size:10px;color:var(--text3);margin-bottom:6px;">섹터: <span style="color:var(--accent);">${industry || sector || '미분류'}</span> · ${all.length}개 비교</div>
+    <table class="peer-table">
+      <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 function selectScreenerStock(ticker, market) {
