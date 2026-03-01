@@ -889,10 +889,8 @@ async function generateAIAnalysis(targetId, type) {
     const formatted = text
       .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--orange)">$1</strong>')
       .replace(/^#{1,3}\s+(.+)$/gm, '<strong style="color:var(--accent)">$1</strong>')
-      .replace(/^(📊|🔍|⚠️|🌏|📅|💬|🎯|📈|📉|📋|💡)[^
-]*/gm, m => `<span class="ai-label">${m}</span>`)
-      .replace(/
-/g, '<br>');
+      .replace(/^(📊|🔍|⚠️|🌏|📅|💬|🎯|📈|📉|📋|💡)[^\n]*/gm, m => `<span class="ai-label">${m}</span>`)
+      .replace(/\n/g, '<br>');
     el.innerHTML = `<div class="ai-analysis-text">${formatted}</div>`;
   } catch(e) {
     el.innerHTML = '<div style="color:var(--text3);font-size:12px;">AI 분석 실패: ' + e.message + '</div>';
