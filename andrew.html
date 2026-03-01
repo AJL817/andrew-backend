@@ -308,14 +308,14 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 16px; cursor: pointer; user-select: none;
 }
-.ai-analysis-header:hover { background: rgba(0,255,136,.04); }
+.ai-analysis-header:hover { background: rgba(0,255,136,.08); }
 .ai-analysis-title { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
-.ai-analysis-toggle { font-size: 12px; color: var(--text3); transition: transform .3s; }
+.ai-analysis-toggle { font-size: 14px; color: var(--accent); transition: transform .3s; font-weight: bold; }
 .ai-analysis-toggle.open { transform: rotate(180deg); }
 .ai-analysis-body { padding: 0 16px 16px; }
 .ai-analysis-body.collapsed { display: none; }
-.ai-analysis-text { font-size: 13px; color: var(--text); line-height: 1.8; }
-.ai-label { font-size: 11px; font-weight: 700; color: var(--accent); margin: 10px 0 3px; display: block; }
+.ai-analysis-text { font-size: 13px; color: var(--text); line-height: 1.9; }
+.ai-label { font-size: 12px; font-weight: 700; color: var(--accent); margin: 14px 0 4px; display: block; letter-spacing: .5px; }
 .ai-loading { display: flex; align-items: center; gap: 8px; color: var(--text3); font-size: 12px; }
 .ai-dot { width:6px;height:6px;border-radius:50%;background:var(--accent);animation:aipulse 1s infinite; }
 @keyframes aipulse { 0%,100%{opacity:.3} 50%{opacity:1} }
@@ -381,6 +381,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
     <div class="section-head">
       <h2>📊 마켓 오버뷰 <span class="sub" id="mkt-updated"></span></h2>
       <button class="refresh-btn" onclick="loadMarket()">↻ 새로고침</button>
+    </div>
+    <div class="ai-analysis">
+      <div class="ai-analysis-header" onclick="toggleAI('dashboard-analysis')">
+        <span class="ai-analysis-title">⬡ AI 시황 분석</span>
+        <span class="ai-analysis-toggle" id="dashboard-analysis-toggle">▼</span>
+      </div>
+      <div class="ai-analysis-body" id="dashboard-analysis">
+        <div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>
+      </div>
     </div>
     <div style="margin-bottom:16px;">
       <div class="card-title" style="margin-bottom:10px;">🇺🇸 미국 주요 지수</div>
@@ -893,6 +902,48 @@ async function loadNews(targetId, limit) {
 
 // ── 모닝 브리핑 ──────────────────────────────────────
 
+
+async function loadDashboardAI(marketData, newsData) {
+  const el = document.getElementById('dashboard-analysis');
+  if (!el) return;
+  const mkt = marketData || {};
+  const fmt = (k) => { const v = mkt[k]; if (!v) return '-'; const p = Number(v.price).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); const c = v.change_pct != null ? (v.change_pct >= 0 ? '+' : '') + v.change_pct + '%' : ''; return `${p} (${c})`; };
+  const mktSummary = `S&P500: ${fmt('sp500')}, 나스닥: ${fmt('nasdaq')}, 코스피: ${fmt('kospi')}, 코스닥: ${fmt('kosdaq')}, USD/KRW: ${fmt('usdkrw')}, 미10년물: ${fmt('us10y')}%, VIX: ${fmt('vix')}, VKOSPI: ${fmt('vkospi')}, 금: ${fmt('gold')}, WTI: ${fmt('wti')}`;
+  const newsSummary = (newsData||[]).slice(0,10).map(n=>`- [${n.source||''}] ${n.title}${n.content ? '\n  └ '+n.content.slice(0,120) : ''}`).join('\n') || '없음';
+  const prompt = `당신은 Andrew의 전담 투자 어시스턴트입니다. Andrew는 SNU 경영학과 2학년으로 글로벌 헤지펀드를 목표로 하는 투자자입니다. 버핏 가치투자 + 하워드 막스 사이클 + 카너먼 행동경제학 기반 Draft 3.0 철학을 가지고 있습니다.
+
+[실시간 시장 지표]
+${mktSummary}
+
+[글로벌 + 한국 주요 뉴스]
+${newsSummary}
+
+아래 5개 섹션으로 지금 시장 분석을 해주세요 (한국어, 각 3-4문장):
+
+📊 지금 시장 — 현재 글로벌·한국 시장의 핵심 흐름. 주요 지수 움직임과 그 의미를 구체적 수치와 함께.
+
+🌏 글로벌 매크로 시그널 — 금리·달러·유가·금 등 매크로 지표가 보내는 신호. 한국시장과의 연관성.
+
+🔍 오늘의 핵심 이슈 — 시장에서 가장 중요한 이슈 2가지와 수혜/피해 섹터.
+
+⚠️ 리스크 레이더 — VIX·VKOSPI 기준 현재 센티먼트 구간(공포/탐욕/중립). 숨겨진 리스크 1가지.
+
+💡 Action Point — Draft 3.0 관점 현재 포지션 판단(매수 적극/분할매수/관망/회피)과 주목할 섹터.`;
+  try {
+    el.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>';
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await resp.json();
+    const text = data.content?.[0]?.text || '분석 실패';
+    const formatted = text.replace(/^(📊|🌏|🔍|⚠️|💡|📅|💰|💬)[^
+]*/gm, m => `<span class="ai-label">${m}</span>`).replace(/
+/g, '<br>');
+    el.innerHTML = `<div class="ai-analysis-text">${formatted}</div>`;
+  } catch(e) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;">AI 분석 실패: ' + e.message + '</div>'; }
+}
+
 function toggleAI(id) {
   const body = document.getElementById(id);
   const toggle = document.getElementById(id + '-toggle');
@@ -1004,6 +1055,14 @@ async function loadMorning() {
   const now = new Date();
   document.getElementById('morning-time').textContent = now.toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
   await loadMarket();
+  // 대시보드 AI 분석
+  try {
+    const [mktJ, newsJ] = await Promise.all([
+      fetch(BACKEND + '/market/overview').then(r=>r.json()),
+      fetch(BACKEND + '/news/rss').then(r=>r.json())
+    ]);
+    loadDashboardAI(mktJ.data, newsJ.data);
+  } catch(e) {}
   const newsData = await loadNews('morning-news', 8);
   await loadDart(1);
   try { const mktJ = await (await fetch(BACKEND + '/market/overview')).json(); const dartJ = await (await fetch(BACKEND + '/dart/recent?days=1')).json(); generateAIAnalysis('morning-analysis', mktJ.data, newsData, dartJ.data, 'morning'); } catch(e) {}
