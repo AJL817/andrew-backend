@@ -1282,468 +1282,90 @@ async def dart_recent(days: int = 7):
 
 # ── 뉴스 RSS ─────────────────────────────────────────────────
 RSS_FEEDS = [
-    {"name":"한국경제","url":"https://www.hankyung.com/feed/economy"},
-    {"name":"한국경제","url":"https://www.hankyung.com/feed/finance"},
-    {"name":"매일경제","url":"https://www.mk.co.kr/rss/30000001/"},
-    {"name":"매일경제","url":"https://www.mk.co.kr/rss/30100041/"},
-    {"name":"연합뉴스","url":"https://www.yna.co.kr/rss/economy.xml"},
+    # 한국
+    {"name":"한국경제","url":"https://www.hankyung.com/feed/economy","lang":"ko"},
+    {"name":"한국경제","url":"https://www.hankyung.com/feed/finance","lang":"ko"},
+    {"name":"매일경제","url":"https://www.mk.co.kr/rss/30000001/","lang":"ko"},
+    {"name":"매일경제","url":"https://www.mk.co.kr/rss/30100041/","lang":"ko"},
+    {"name":"연합뉴스","url":"https://www.yna.co.kr/rss/economy.xml","lang":"ko"},
+    {"name":"조선비즈","url":"https://biz.chosun.com/arc/outboundfeeds/rss/?outputType=xml","lang":"ko"},
+    {"name":"서울경제","url":"https://www.sedaily.com/RSS/A","lang":"ko"},
+    # 글로벌
+    {"name":"Reuters","url":"https://feeds.reuters.com/reuters/businessNews","lang":"en"},
+    {"name":"Reuters","url":"https://feeds.reuters.com/reuters/technologyNews","lang":"en"},
+    {"name":"CNBC","url":"https://www.cnbc.com/id/10001147/device/rss/rss.html","lang":"en"},
+    {"name":"CNBC","url":"https://www.cnbc.com/id/19854910/device/rss/rss.html","lang":"en"},
+    {"name":"FT","url":"https://www.ft.com/rss/home","lang":"en"},
+    {"name":"WSJ","url":"https://feeds.a.dj.com/rss/RSSMarketsMain.xml","lang":"en"},
+    {"name":"Bloomberg","url":"https://feeds.bloomberg.com/markets/news.rss","lang":"en"},
+    {"name":"NYT","url":"https://rss.nytimes.com/services/xml/rss/nyt/Business.xml","lang":"en"},
 ]
 
-def parse_rss(xml: str, src: str) -> list:
-    import re
-    items, raw_items = [], re.findall(r"<item>(.*?)</item>", xml, re.DOTALL)
-    for raw in raw_items[:6]:
-        def g(tag): m=re.search(rf"<{tag}>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</{tag}>",raw,re.DOTALL); return m.group(1).strip() if m else ""
-        title = re.sub(r"<[^>]+>","",g("title")).strip()
-        desc  = re.sub(r"<[^>]+>","",g("description")).strip()[:120]
+def parse_rss(xml: str, src: str, lang: str = "ko") -> list:
+    import re as _re
+    items, raw_items = [], _re.findall(r"<item>(.*?)</item>", xml, _re.DOTALL)
+    for raw in raw_items[:5]:
+        def g(tag):
+            m = _re.search(rf"<{tag}>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</{tag}>", raw, _re.DOTALL)
+            return m.group(1).strip() if m else ""
+        title = _re.sub(r"<[^>]+>", "", g("title")).strip()
+        desc  = _re.sub(r"<[^>]+>", "", g("description")).strip()[:200]
+        link  = g("link").strip()
+        if not link:
+            m2 = _re.search(r"<link>(.*?)</link>", raw, _re.DOTALL)
+            link = m2.group(1).strip() if m2 else ""
         if title:
-            items.append({"source":src,"title":title,"link":g("link"),
-                          "date":g("pubDate"),"desc":desc})
+            items.append({
+                "source": src, "title": title, "link": link,
+                "date": g("pubDate"), "desc": desc, "lang": lang, "content": ""
+            })
     return items
 
+
+async def fetch_article_content(url: str, client: httpx.AsyncClient) -> str:
+    """기사 URL에서 본문 300자 추출"""
+    if not url or not url.startswith("http"):
+        return ""
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Accept": "text/html,application/xhtml+xml",
+        }
+        r = await client.get(url, headers=headers, timeout=6, follow_redirects=True)
+        html = r.text
+        import re as _re
+        html = _re.sub(r"<script[^>]*>.*?</script>", "", html, flags=_re.DOTALL | _re.IGNORECASE)
+        html = _re.sub(r"<style[^>]*>.*?</style>", "", html, flags=_re.DOTALL | _re.IGNORECASE)
+        text = _re.sub(r"<[^>]+>", " ", html)
+        text = _re.sub(r"\s+", " ", text).strip()
+        words = [w for w in text.split() if len(w) > 1]
+        result = " ".join(words)
+        if len(result) > 400:
+            result = result[150:500]
+        return result[:300]
+    except:
+        return ""
+
+
 @app.get("/news/rss")
-async def news_rss():
+async def news_rss(with_content: bool = False):
     all_news = []
     async with httpx.AsyncClient(timeout=8, follow_redirects=True) as c:
-        for f in RSS_FEEDS:
+        for feed in RSS_FEEDS:
             try:
-                r = await c.get(f["url"], headers={"User-Agent":"Mozilla/5.0"})
-                all_news.extend(parse_rss(r.text, f["name"]))
-            except: pass
-    return {"status":"ok","count":len(all_news),"data":all_news}
-
-# ── Telegram ─────────────────────────────────────────────────
-@app.get("/telegram/messages")
-async def telegram_messages(limit: int = 20):
-    if not TELEGRAM_BOT_TOKEN:
-        return {"status":"error","message":"TELEGRAM_BOT_TOKEN not set"}
-    msgs = []
-    async with httpx.AsyncClient(timeout=10) as c:
-        for chat_id in TELEGRAM_CHAT_IDS:
-            try:
-                r = await c.get(
-                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates",
-                    params={"limit":limit},
-                )
-                for upd in r.json().get("result",[]):
-                    msg = upd.get("message") or upd.get("channel_post",{})
-                    if msg: msgs.append({"chat_id":chat_id,"text":msg.get("text",""),"date":msg.get("date",0)})
-            except: pass
-    return {"status":"ok","data":msgs}
-
-
-# ── 네이버 금융 시황 데이터 ────────────────────────────────────
-
-NAVER_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    "Referer": "https://finance.naver.com/",
-    "Accept": "application/json, text/plain, */*",
-}
-
-async def fetch_naver_sector(client: httpx.AsyncClient) -> list:
-    """네이버 업종별 등락률"""
-    result = []
-    try:
-        url = "https://m.stock.naver.com/front-api/v1/sectorCard?sectorCode=&stockExchangeType=ALL&page=1&pageSize=30"
-        r = await client.get(url, headers=NAVER_HEADERS, timeout=8)
-        sectors = r.json().get("result", {}).get("sectorCardList", [])
-        for s in sectors[:20]:
-            result.append({
-                "name": s.get("sectorName", ""),
-                "change_pct": s.get("fluctuationsRatio", 0),
-                "market": s.get("stockExchangeType", ""),
-            })
-    except:
-        pass
-    if not result:
-        try:
-            import re as _re
-            for market, code in [("KOSPI", "0"), ("KOSDAQ", "1")]:
-                url = f"https://finance.naver.com/sise/sise_group.naver?type=upjong&sosok={code}"
-                r = await client.get(url, headers={**NAVER_HEADERS, "Accept": "text/html"}, timeout=8)
-                matches = _re.findall(
-                    r'class="tit">(.*?)</a>.*?>([-+]?\d+\.\d+)</td>',
-                    r.text, _re.DOTALL
-                )
-                for name, chg in matches[:10]:
-                    result.append({"name": name.strip(), "change_pct": float(chg), "market": market})
-        except:
-            pass
-    return result
-
-
-async def fetch_naver_investor(client: httpx.AsyncClient) -> dict:
-    """투자자별 매매동향 (외국인/기관/개인)"""
-    result = {}
-    try:
-        url = "https://m.stock.naver.com/api/index/KOSPI/investorSaleList?page=1&pageSize=5"
-        r = await client.get(url, headers=NAVER_HEADERS, timeout=8)
-        investors = r.json().get("result", {}).get("investorSaleList", [])
-        for inv in investors:
-            itype = inv.get("investorType", "")
-            net   = inv.get("netSale", 0)
-            if itype:
-                result[itype] = net
-    except:
-        pass
-    return result
-
-
-async def fetch_naver_top_stocks(client: httpx.AsyncClient) -> dict:
-    """코스피 상승·하락·외국인·기관 순매수 상위 종목"""
-    result = {"rise": [], "fall": [], "volume": [], "foreign_buy": [], "inst_buy": []}
-    base = "https://m.stock.naver.com/front-api/v1/stock/rank"
-
-    async def _fetch(category, rtype, key, value_key, value_label):
-        try:
-            url = f"{base}?category={category}&market=KOSPI&type={rtype}&page=1&pageSize=5"
-            r = await client.get(url, headers=NAVER_HEADERS, timeout=8)
-            stocks = r.json().get("result", {}).get("stockList", [])
-            result[key] = [
-                {"name": s.get("stockName",""),
-                 "change_pct": s.get("fluctuationsRatio", 0),
-                 value_label: s.get(value_key, 0)}
-                for s in stocks[:5]
-            ]
-        except:
-            pass
-
-    await asyncio.gather(
-        _fetch("changeRate",   "increase", "rise",        "closePrice",                "price"),
-        _fetch("changeRate",   "decrease", "fall",        "closePrice",                "price"),
-        _fetch("quant",        "increase", "volume",      "accumulatedTradingVolume",  "volume"),
-        _fetch("foreignNetBuy","increase", "foreign_buy", "foreignNetBuy",             "net_buy"),
-        _fetch("orgNetBuy",    "increase", "inst_buy",    "orgNetBuy",                 "net_buy"),
-        return_exceptions=True
-    )
-    return result
-
-
-async def fetch_naver_theme(client: httpx.AsyncClient) -> list:
-    """테마별 등락률 상위"""
-    result = []
-    try:
-        url = "https://m.stock.naver.com/front-api/v1/themeCard?page=1&pageSize=15&type=increase"
-        r = await client.get(url, headers=NAVER_HEADERS, timeout=8)
-        themes = r.json().get("result", {}).get("themeCardList", [])
-        for t in themes[:10]:
-            result.append({
-                "name":       t.get("themeName", ""),
-                "change_pct": t.get("fluctuationsRatio", 0),
-                "top_stock":  t.get("representStockName", ""),
-            })
-    except:
-        pass
-    return result
-
-
-async def fetch_naver_all() -> dict:
-    """네이버 금융 전체 병렬 수집"""
-    async with httpx.AsyncClient(timeout=10) as client:
-        results = await asyncio.gather(
-            fetch_naver_sector(client),
-            fetch_naver_investor(client),
-            fetch_naver_top_stocks(client),
-            fetch_naver_theme(client),
+                r = await c.get(feed["url"], headers={"User-Agent": "Mozilla/5.0"})
+                items = parse_rss(r.text, feed["name"], feed.get("lang", "ko"))
+                all_news.extend(items)
+            except:
+                pass
+    # 상위 15개 기사 본문 병렬 크롤링
+    async with httpx.AsyncClient(timeout=6, follow_redirects=True) as c:
+        targets = all_news[:15]
+        contents = await asyncio.gather(
+            *[fetch_article_content(n["link"], c) for n in targets],
             return_exceptions=True
         )
-    sectors, investor, top_stocks, themes = [
-        r if not isinstance(r, Exception) else ({} if i == 1 else [])
-        for i, r in enumerate(results)
-    ]
-    return {
-        "sectors":    sectors    if isinstance(sectors, list)    else [],
-        "investor":   investor   if isinstance(investor, dict)   else {},
-        "top_stocks": top_stocks if isinstance(top_stocks, dict) else {},
-        "themes":     themes     if isinstance(themes, list)     else [],
-        "updated":    kst_now().isoformat(),
-    }
-
-
-@app.get("/naver/market")
-async def naver_market():
-    """네이버 금융 시황 — 섹터/투자자/수급/테마"""
-    data = await fetch_naver_all()
-    return {"status": "ok", **data}
-
-
-# ── AI 시황 분석 ──────────────────────────────────────────────
-
-def _naver_summary(naver_data: dict) -> str:
-    """네이버 데이터를 Claude 프롬프트용 텍스트로 변환"""
-    if not naver_data:
-        return ""
-    lines = []
-    # 업종
-    sectors = naver_data.get("sectors", [])
-    if sectors:
-        up = sorted(sectors, key=lambda x: x.get("change_pct", 0), reverse=True)[:3]
-        dn = sorted(sectors, key=lambda x: x.get("change_pct", 0))[:3]
-        lines.append("[업종 강세] " + ", ".join(f"{s['name']}({s['change_pct']:+.1f}%)" for s in up))
-        lines.append("[업종 약세] " + ", ".join(f"{s['name']}({s['change_pct']:+.1f}%)" for s in dn))
-    # 투자자 동향
-    inv = naver_data.get("investor", {})
-    if inv:
-        parts = []
-        for k, v in inv.items():
-            if v is not None:
-                parts.append(f"{k}: {'+' if v>0 else ''}{int(v):,}억")
-        if parts:
-            lines.append("[투자자 동향] " + " | ".join(parts))
-    # 수급 상위
-    ts = naver_data.get("top_stocks", {})
-    if ts.get("foreign_buy"):
-        names = ", ".join(s["name"] for s in ts["foreign_buy"][:3])
-        lines.append(f"[외국인 순매수] {names}")
-    if ts.get("inst_buy"):
-        names = ", ".join(s["name"] for s in ts["inst_buy"][:3])
-        lines.append(f"[기관 순매수] {names}")
-    if ts.get("rise"):
-        names = ", ".join(f"{s['name']}({s['change_pct']:+.1f}%)" for s in ts["rise"][:3])
-        lines.append(f"[상승 상위] {names}")
-    if ts.get("fall"):
-        names = ", ".join(f"{s['name']}({s['change_pct']:+.1f}%)" for s in ts["fall"][:3])
-        lines.append(f"[하락 상위] {names}")
-    # 테마
-    themes = naver_data.get("themes", [])
-    if themes:
-        lines.append("[테마 강세] " + ", ".join(f"{t['name']}({t['change_pct']:+.1f}%)" for t in themes[:4]))
-    return "\n".join(lines)
-
-
-async def claude_analyze(briefing_type: str, market_data: dict, news: list, disclosures: list, naver_data: dict = None) -> str:
-    """Claude API로 시황 분석 텍스트 생성"""
-    if not ANTHROPIC_API_KEY:
-        return "⚠️ ANTHROPIC_API_KEY가 설정되지 않았습니다."
-    try:
-        import anthropic as ac
-        client = ac.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-
-        # 시장 데이터 요약 (소문자 키로 접근)
-        mkt = market_data if isinstance(market_data, dict) else {}
-
-        def fmt(key):
-            d = mkt.get(key, {})
-            p = d.get("price", "—")
-            c = d.get("change_pct", "—")
-            sign = "+" if isinstance(c, (int, float)) and c >= 0 else ""
-            return f"{p} ({sign}{c}%)"
-
-        market_summary = (
-            f"S&P500: {fmt('sp500')} | 나스닥: {fmt('nasdaq')} | 다우: {fmt('dow')}"
-            f"코스피: {fmt('kospi')} | 코스닥: {fmt('kosdaq')} | USD/KRW: {fmt('usdkrw')}"
-            f"VIX: {fmt('vix')} | 금: {fmt('gold')} | WTI: {fmt('wti')} | 미10년물: {fmt('us10y')} | 은: {fmt('silver')}"
-        )
-
-        news_summary = "\n".join(
-            f"- [{n.get('source','')}] {n.get('title','')}"
-            for n in news[:8]
-        ) or "없음"
-
-        dart_summary = "\n".join(
-            f"- {d.get('company','')} | {d.get('title','')}"
-            for d in disclosures[:5]
-        ) or "없음"
-
-        naver_txt = _naver_summary(naver_data)
-        naver_section = f"\n[네이버 금융 수급 & 업종]\n{naver_txt}" if naver_txt else ""
-
-        prompts = {
-            "morning": f"""너는 Andrew의 전담 투자 어시스턴트야. Andrew는 SNU 경영학과 2학년으로 글로벌 헤지펀드를 목표로 하는 투자자야.
-
-아래 데이터를 바탕으로 오늘 아침 시황 브리핑을 작성해줘.
-
-[시장 지표]
-{market_summary}
-
-[주요 뉴스]
-{news_summary}
-
-[주요 공시]
-{dart_summary}
-{naver_section}
-
-작성 형식:
-1. **한줄 요약** — 오늘 시장 핵심 한 문장
-2. **미국 시장 흐름** — 전날 뭐가 움직였고 왜인지 (2-3문장)
-3. **한국 시장 전망** — 오늘 국장에 미칠 영향, 업종 흐름 포함 (2-3문장)
-4. **수급 포인트** — 외국인/기관 동향 및 주목 업종
-5. **오늘의 Pick** — 오늘 특히 주목할 섹터/테마 한 가지와 이유
-
-간결하고 날카롭게, 실제 트레이더처럼 써줘.""",
-
-            "closing": f"""너는 Andrew의 전담 투자 어시스턴트야.
-
-오늘 국장 마감 기준 시황을 정리해줘.
-
-[마감 지표]
-{market_summary}
-
-[오늘 뉴스]
-{news_summary}
-
-[오늘 공시]
-{dart_summary}
-{naver_section}
-
-작성 형식:
-1. **마감 한줄 요약** — 오늘 국장 핵심 한 문장
-2. **오늘 국장 흐름** — 코스피/코스닥 주요 움직임과 원인 (2-3문장)
-3. **수급 포인트** — 외국인/기관 순매수 동향, 강세 업종
-4. **내일 주목 포인트** — 내일 체크해야 할 것 2가지
-5. **총평** — Draft 3.0 철학 관점에서 오늘 시장 한 줄 평가""",
-
-            "weekend": f"""너는 Andrew의 전담 투자 어시스턴트야.
-
-이번 주 핵심 이슈와 다음 주 전망을 정리해줘.
-
-[이번 주 시장 지표]
-{market_summary}
-
-[주요 뉴스 & 사설]
-{news_summary}
-
-[주요 공시]
-{dart_summary}
-{naver_section}
-
-작성 형식:
-1. **이번 주 핵심 테마** — 시장을 움직인 핵심 이슈 2가지
-2. **수급 & 업종 리뷰** — 이번 주 외국인/기관 동향, 강/약세 업종
-3. **다음 주 캘린더** — 체크해야 할 이벤트/발표
-4. **Andrew's 주말 숙제** — 이번 주말 분석할 것 추천
-5. **한 줄 전망** — Draft 3.0 관점 다음 주 시장 전망""",
-
-            "dashboard": f"""너는 Andrew의 전담 투자 어시스턴트야. 지금 시장 전체를 한눈에 요약해줘.
-
-[시장]
-{market_summary}
-
-[뉴스]
-{news_summary}
-{naver_section}
-
-3개 섹션 (한국어, 각 2문장, 간결하게):
-📊 지금 시장 — 미국·한국 시장 현재 흐름 핵심 요약
-⚠️ 리스크 레이더 — VIX·금리·환율 + 업종/수급 기준 현재 위험 신호
-💡 오늘의 포인트 — Draft 3.0 관점 지금 당장 주목할 것""",
-
-            "dart": f"""너는 Andrew의 전담 투자 어시스턴트야. 아래 DART 공시들을 투자자 관점으로 해석해줘.
-
-[공시 목록]
-{dart_summary}
-
-[시장 맥락]
-{market_summary}
-
-3개 섹션 (한국어):
-📋 주요 공시 요약 — 가장 중요한 공시 2-3개와 투자 의미
-🔍 투자 시사점 — 이 공시들이 주가·섹터에 미칠 영향
-⚠️ 주의할 공시 — 리스크 관점에서 체크해야 할 것""",
-        }
-
-        prompt = prompts.get(briefing_type, prompts["dashboard"])
-        message = await client.messages.create(
-            model="claude-opus-4-6",
-            max_tokens=1024,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return message.content[0].text
-    except Exception as e:
-        return f"⚠️ AI 분석 실패: {str(e)}"
-
-
-# ── 브리핑 ───────────────────────────────────────────────────
-@app.get("/briefing/morning")
-async def briefing_morning():
-    mkt, dart, news, naver = await asyncio.gather(
-        market_overview(), dart_recent(days=1), news_rss(), fetch_naver_all()
-    )
-    ai = await claude_analyze("morning", mkt["data"], news["data"][:8], dart["data"][:5], naver)
-    return {"status":"ok","type":"morning","generated_at":kst_now().isoformat(),
-            "market":mkt["data"],"disclosures":dart["data"][:5],"news":news["data"][:8],
-            "naver":naver,"ai_analysis":ai}
-
-
-@app.get("/briefing/closing")
-async def briefing_closing():
-    mkt, dart, news, naver = await asyncio.gather(
-        market_overview(), dart_recent(days=1), news_rss(), fetch_naver_all()
-    )
-    ai = await claude_analyze("closing", mkt["data"], news["data"][:6], dart["data"][:10], naver)
-    return {"status":"ok","type":"closing","generated_at":kst_now().isoformat(),
-            "market":mkt["data"],"disclosures":dart["data"][:10],"news":news["data"][:6],
-            "naver":naver,"ai_analysis":ai}
-
-
-@app.get("/briefing/weekend")
-async def briefing_weekend():
-    news, dart, mkt, naver = await asyncio.gather(
-        news_rss(), dart_recent(days=3), market_overview(), fetch_naver_all()
-    )
-    ai = await claude_analyze("weekend", mkt["data"], news["data"], dart["data"][:8], naver)
-    return {"status":"ok","type":"weekend","generated_at":kst_now().isoformat(),
-            "news":news["data"],"disclosures":dart["data"][:8],
-            "naver":naver,"ai_analysis":ai}
-
-
-@app.get("/ai/dashboard")
-async def ai_dashboard():
-    mkt, news, naver = await asyncio.gather(
-        market_overview(), news_rss(), fetch_naver_all()
-    )
-    ai = await claude_analyze("dashboard", mkt["data"], news["data"][:8], [], naver)
-    return {"status":"ok","ai_analysis":ai,"generated_at":kst_now().isoformat()}
-
-
-@app.get("/ai/dart")
-async def ai_dart_analysis(days: int = 7):
-    dart, mkt = await asyncio.gather(dart_recent(days=days), market_overview())
-    ai = await claude_analyze("dart", mkt["data"], [], dart["data"], None)
-    return {"status":"ok","ai_analysis":ai,"generated_at":kst_now().isoformat()}
-
-
-# ── 루트 / 앱 서빙 ───────────────────────────────────────────
-@app.get("/")
-def root():
-    return {"status":"running","version":"4.2","naver_market":True,"ai_analysis":True}
-
-
-@app.get("/manifest.json")
-async def serve_manifest():
-    from fastapi.responses import JSONResponse
-    return JSONResponse({
-        "name": "ANDREW Investment System",
-        "short_name": "ANDREW",
-        "description": "개인 투자 철학 기반 주식 스크리닝 시스템",
-        "start_url": "/app",
-        "display": "standalone",
-        "background_color": "#0a0a0a",
-        "theme_color": "#00ff88",
-        "icons": [{"src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}]
-    })
-
-
-@app.get("/sw.js")
-async def serve_sw():
-    from fastapi.responses import Response
-    sw = b"self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});"
-    return Response(content=sw, media_type="application/javascript")
-
-
-@app.get("/icon.svg")
-async def serve_icon():
-    from fastapi.responses import Response
-    svg = (
-        b'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">'
-        b'<rect width="192" height="192" rx="40" fill="#0a0a0a"/>'
-        b'<text x="96" y="95" font-family="monospace" font-size="80" font-weight="bold" fill="#00ff88" text-anchor="middle">A</text>'
-        b'<text x="96" y="140" font-family="monospace" font-size="16" fill="#666" text-anchor="middle">ANDREW</text>'
-        b'</svg>'
-    )
-    return Response(content=svg, media_type="image/svg+xml")
-
-
-@app.get("/app")
-async def serve_app():
-    return FileResponse("andrew.html", media_type="text/html")
+        for n, cont in zip(targets, contents):
+            if isinstance(cont, str) and cont:
+                n["content"] = cont
+    return {"status": "ok", "count": len(all_news), "data": all_news}
