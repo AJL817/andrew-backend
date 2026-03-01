@@ -1284,9 +1284,7 @@ async def dart_recent(days: int = 7):
 RSS_FEEDS = [
     # 한국
     {"name":"한국경제","url":"https://www.hankyung.com/feed/economy","lang":"ko"},
-    {"name":"한국경제","url":"https://www.hankyung.com/feed/finance","lang":"ko"},
     {"name":"매일경제","url":"https://www.mk.co.kr/rss/30000001/","lang":"ko"},
-    {"name":"매일경제","url":"https://www.mk.co.kr/rss/30100041/","lang":"ko"},
     {"name":"연합뉴스","url":"https://www.yna.co.kr/rss/economy.xml","lang":"ko"},
     {"name":"조선비즈","url":"https://biz.chosun.com/arc/outboundfeeds/rss/?outputType=xml","lang":"ko"},
     {"name":"서울경제","url":"https://www.sedaily.com/RSS/A","lang":"ko"},
@@ -1294,11 +1292,11 @@ RSS_FEEDS = [
     {"name":"Reuters","url":"https://feeds.reuters.com/reuters/businessNews","lang":"en"},
     {"name":"Reuters","url":"https://feeds.reuters.com/reuters/technologyNews","lang":"en"},
     {"name":"CNBC","url":"https://www.cnbc.com/id/10001147/device/rss/rss.html","lang":"en"},
-    {"name":"CNBC","url":"https://www.cnbc.com/id/19854910/device/rss/rss.html","lang":"en"},
-    {"name":"FT","url":"https://www.ft.com/rss/home","lang":"en"},
     {"name":"WSJ","url":"https://feeds.a.dj.com/rss/RSSMarketsMain.xml","lang":"en"},
+    {"name":"FT","url":"https://www.ft.com/rss/home","lang":"en"},
     {"name":"Bloomberg","url":"https://feeds.bloomberg.com/markets/news.rss","lang":"en"},
     {"name":"NYT","url":"https://rss.nytimes.com/services/xml/rss/nyt/Business.xml","lang":"en"},
+    {"name":"Nikkei","url":"https://asia.nikkei.com/rss/feed/nar","lang":"en"},
 ]
 
 def parse_rss(xml: str, src: str, lang: str = "ko") -> list:
@@ -1350,17 +1348,29 @@ async def fetch_article_content(url: str, client: httpx.AsyncClient) -> str:
 @app.get("/news/rss")
 async def news_rss(with_content: bool = False):
     all_news = []
-    async with httpx.AsyncClient(timeout=8, follow_redirects=True) as c:
-        for feed in RSS_FEEDS:
+    ua_list = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        "Googlebot/2.1 (+http://www.google.com/bot.html)",
+        "curl/7.68.0",
+    ]
+    async with httpx.AsyncClient(timeout=10, follow_redirects=True) as c:
+        import random
+        for i, feed in enumerate(RSS_FEEDS):
             try:
-                r = await c.get(feed["url"], headers={"User-Agent": "Mozilla/5.0"})
+                headers = {
+                    "User-Agent": ua_list[i % len(ua_list)],
+                    "Accept": "application/rss+xml, application/xml, text/xml, */*",
+                    "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
+                }
+                r = await c.get(feed["url"], headers=headers, timeout=8)
                 items = parse_rss(r.text, feed["name"], feed.get("lang", "ko"))
                 all_news.extend(items)
             except:
                 pass
     # 상위 15개 기사 본문 병렬 크롤링
     async with httpx.AsyncClient(timeout=6, follow_redirects=True) as c:
-        targets = all_news[:15]
+        targets = all_news[:8]
         contents = await asyncio.gather(
             *[fetch_article_content(n["link"], c) for n in targets],
             return_exceptions=True
