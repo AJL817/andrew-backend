@@ -937,9 +937,7 @@ ${newsSummary}
     });
     const data = await resp.json();
     const text = data.content?.[0]?.text || '분석 실패';
-    const formatted = text.replace(/^(📊|🌏|🔍|⚠️|💡|📅|💰|💬)[^
-]*/gm, m => `<span class="ai-label">${m}</span>`).replace(/
-/g, '<br>');
+    const formatted = text.replace(/^(📊|🌏|🔍|⚠️|💡|📅|💰|💬)[^\n]*/gm, m => `<span class="ai-label">${m}</span>`).replace(/\n/g, '<br>');
     el.innerHTML = `<div class="ai-analysis-text">${formatted}</div>`;
   } catch(e) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;">AI 분석 실패: ' + e.message + '</div>'; }
 }
