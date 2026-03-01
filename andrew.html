@@ -373,6 +373,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
       <h2>📊 마켓 오버뷰 <span class="sub" id="mkt-updated"></span></h2>
       <button class="refresh-btn" onclick="loadMarket()">↻ 새로고침</button>
     </div>
+    <div class="ai-analysis" id="dashboard-analysis"><div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div></div>
     <div style="margin-bottom:16px;">
       <div class="card-title" style="margin-bottom:10px;">🇺🇸 미국 주요 지수</div>
       <div class="grid-4">
@@ -559,6 +560,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
         <button class="refresh-btn" onclick="loadDartFull()">↻ 새로고침</button>
       </div>
     </div>
+    <div class="ai-analysis" id="dart-analysis"><div class="ai-loading"><div class="ai-dot"></div> AI가 공시를 분석하고 있어요...</div></div>
     <div class="card" id="dart-full-list"><div class="loading-bar skeleton w80"></div><div class="loading-bar skeleton w60"></div></div>
   </div>
 
@@ -796,6 +798,10 @@ async function loadMarket() {
       setChg(chgId, v.change_pct);
     });
   } catch(e) { console.error(e); }
+  // 대시보드 탭이 활성화돼 있을 때만 AI 분석 갱신
+  if (document.getElementById('sec-dashboard').classList.contains('active')) {
+    generateAIAnalysis('dashboard-analysis', 'dashboard');
+  }
 }
 
 // ── DART 로드 ────────────────────────────────────────
@@ -829,6 +835,7 @@ async function loadDartFull() {
     const r = await fetch(BACKEND + '/dart/recent?days=' + days);
     const j = await r.json();
     renderDartList(j.data, 'dart-full-list');
+    generateAIAnalysis('dart-analysis', 'dart');
   } catch(e) {}
 }
 
@@ -1647,6 +1654,10 @@ switchTab = function(name, el) {
     if (screenerCache.us.length === 0) loadScreener('us');
     else { renderScreenerCards(screenerCache.us, 'us'); loadScreener('us'); }
   }
+  if (name === 'dart') loadDartFull();
+  if (name === 'morning') loadMorning();
+  if (name === 'closing') loadClosing();
+  if (name === 'weekend') loadWeekend();
 };
 
 (async function init() {
