@@ -4,3 +4,5 @@ httpx
 apscheduler
 python-dotenv
 yfinance
+
+anthropic
