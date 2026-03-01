@@ -1055,14 +1055,6 @@ async function loadMorning() {
   const now = new Date();
   document.getElementById('morning-time').textContent = now.toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
   await loadMarket();
-  // 대시보드 AI 분석
-  try {
-    const [mktJ, newsJ] = await Promise.all([
-      fetch(BACKEND + '/market/overview').then(r=>r.json()),
-      fetch(BACKEND + '/news/rss').then(r=>r.json())
-    ]);
-    loadDashboardAI(mktJ.data, newsJ.data);
-  } catch(e) {}
   const newsData = await loadNews('morning-news', 8);
   await loadDart(1);
   try { const mktJ = await (await fetch(BACKEND + '/market/overview')).json(); const dartJ = await (await fetch(BACKEND + '/dart/recent?days=1')).json(); generateAIAnalysis('morning-analysis', mktJ.data, newsData, dartJ.data, 'morning'); } catch(e) {}
@@ -1826,10 +1818,17 @@ switchTab = function(name, el) {
 };
 
 (async function init() {
-  await checkStatus();
+  checkStatus();
   await loadMarket();
   await loadDart(7);
-  setInterval(loadMarket, 60000); // 1분마다 자동 갱신
+  try {
+    const [mktJ, newsJ] = await Promise.all([
+      fetch(BACKEND + '/market/overview').then(r=>r.json()),
+      fetch(BACKEND + '/news/rss').then(r=>r.json())
+    ]);
+    loadDashboardAI(mktJ.data, newsJ.data);
+  } catch(e) {}
+  setInterval(loadMarket, 60000);
   setInterval(checkStatus, 30000);
 })();
 </script>
