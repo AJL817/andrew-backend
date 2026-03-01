@@ -1508,8 +1508,7 @@ def _naver_summary(naver_data: dict) -> str:
     themes = naver_data.get("themes", [])
     if themes:
         lines.append("[테마 강세] " + ", ".join(f"{t['name']}({t['change_pct']:+.1f}%)" for t in themes[:4]))
-    return "
-".join(lines)
+    return "\n".join(lines)
 
 
 async def claude_analyze(briefing_type: str, market_data: dict, news: list, disclosures: list, naver_data: dict = None) -> str:
@@ -1531,29 +1530,23 @@ async def claude_analyze(briefing_type: str, market_data: dict, news: list, disc
             return f"{p} ({sign}{c}%)"
 
         market_summary = (
-            f"S&P500: {fmt('sp500')} | 나스닥: {fmt('nasdaq')} | 다우: {fmt('dow')}
-"
-            f"코스피: {fmt('kospi')} | 코스닥: {fmt('kosdaq')} | USD/KRW: {fmt('usdkrw')}
-"
+            f"S&P500: {fmt('sp500')} | 나스닥: {fmt('nasdaq')} | 다우: {fmt('dow')}"
+            f"코스피: {fmt('kospi')} | 코스닥: {fmt('kosdaq')} | USD/KRW: {fmt('usdkrw')}"
             f"VIX: {fmt('vix')} | 금: {fmt('gold')} | WTI: {fmt('wti')} | 미10년물: {fmt('us10y')} | 은: {fmt('silver')}"
         )
 
-        news_summary = "
-".join(
+        news_summary = "\n".join(
             f"- [{n.get('source','')}] {n.get('title','')}"
             for n in news[:8]
         ) or "없음"
 
-        dart_summary = "
-".join(
+        dart_summary = "\n".join(
             f"- {d.get('company','')} | {d.get('title','')}"
             for d in disclosures[:5]
         ) or "없음"
 
         naver_txt = _naver_summary(naver_data)
-        naver_section = f"
-[네이버 금융 수급 & 업종]
-{naver_txt}" if naver_txt else ""
+        naver_section = f"\n[네이버 금융 수급 & 업종]\n{naver_txt}" if naver_txt else ""
 
         prompts = {
             "morning": f"""너는 Andrew의 전담 투자 어시스턴트야. Andrew는 SNU 경영학과 2학년으로 글로벌 헤지펀드를 목표로 하는 투자자야.
