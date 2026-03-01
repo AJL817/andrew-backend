@@ -1741,11 +1741,13 @@ async def serve_sw():
 @app.get("/icon.svg")
 async def serve_icon():
     from fastapi.responses import Response
-    svg = b'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-<rect width="192" height="192" rx="40" fill="#0a0a0a"/>
-<text x="96" y="95" font-family="monospace" font-size="80" font-weight="bold" fill="#00ff88" text-anchor="middle">A</text>
-<text x="96" y="140" font-family="monospace" font-size="16" fill="#666" text-anchor="middle">ANDREW</text>
-</svg>'''
+    svg = (
+        b'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">'
+        b'<rect width="192" height="192" rx="40" fill="#0a0a0a"/>'
+        b'<text x="96" y="95" font-family="monospace" font-size="80" font-weight="bold" fill="#00ff88" text-anchor="middle">A</text>'
+        b'<text x="96" y="140" font-family="monospace" font-size="16" fill="#666" text-anchor="middle">ANDREW</text>'
+        b'</svg>'
+    )
     return Response(content=svg, media_type="image/svg+xml")
 
 
