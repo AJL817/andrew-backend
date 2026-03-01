@@ -931,12 +931,9 @@ ${newsSummary}
 💡 Action Point — Draft 3.0 관점 현재 포지션 판단(매수 적극/분할매수/관망/회피)과 주목할 섹터.`;
   try {
     el.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>';
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
-    });
+    const resp = await fetch(BACKEND + '/ai/dashboard');
     const data = await resp.json();
-    const text = data.content?.[0]?.text || '분석 실패';
+    const text = data.ai_analysis || '분석 실패';
     const formatted = text.replace(/^(📊|🌏|🔍|⚠️|💡|📅|💰|💬)[^\n]*/gm, m => `<span class="ai-label">${m}</span>`).replace(/\n/g, '<br>');
     el.innerHTML = `<div class="ai-analysis-text">${formatted}</div>`;
   } catch(e) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;">AI 분석 실패: ' + e.message + '</div>'; }
@@ -1038,12 +1035,9 @@ ${dartSummary}
   };
   try {
     el.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>';
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: prompts[type] }] })
-    });
+    const resp = await fetch(BACKEND + '/briefing/' + type);
     const data = await resp.json();
-    const text = data.content?.[0]?.text || '분석 실패';
+    const text = data.ai_analysis || '분석 실패';
     const formatted = text.replace(/^(📊|🔍|⚠️|🌏|📅|💬)[^\n]*/gm, m => `<span class="ai-label">${m}</span>`).replace(/\n/g, '<br>');
     el.innerHTML = `<div class="ai-analysis-text">${formatted}</div>`;
   } catch(e) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;">AI 분석 실패: ' + e.message + '</div>'; }
