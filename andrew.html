@@ -302,9 +302,18 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
 
 .ai-analysis {
   background: linear-gradient(135deg, rgba(0,255,136,.06) 0%, rgba(88,166,255,.06) 100%);
-  border: 1px solid rgba(0,255,136,.25); border-radius: 8px; padding: 16px; margin-bottom: 16px;
+  border: 1px solid rgba(0,255,136,.25); border-radius: 8px; margin-bottom: 16px; overflow: hidden;
 }
-.ai-analysis::before { content: '⬡ AI 시황 분석'; font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 1px; display: block; margin-bottom: 10px; }
+.ai-analysis-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; cursor: pointer; user-select: none;
+}
+.ai-analysis-header:hover { background: rgba(0,255,136,.04); }
+.ai-analysis-title { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+.ai-analysis-toggle { font-size: 12px; color: var(--text3); transition: transform .3s; }
+.ai-analysis-toggle.open { transform: rotate(180deg); }
+.ai-analysis-body { padding: 0 16px 16px; }
+.ai-analysis-body.collapsed { display: none; }
 .ai-analysis-text { font-size: 13px; color: var(--text); line-height: 1.8; }
 .ai-label { font-size: 11px; font-weight: 700; color: var(--accent); margin: 10px 0 3px; display: block; }
 .ai-loading { display: flex; align-items: center; gap: 8px; color: var(--text3); font-size: 12px; }
@@ -373,7 +382,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
       <h2>📊 마켓 오버뷰 <span class="sub" id="mkt-updated"></span></h2>
       <button class="refresh-btn" onclick="loadMarket()">↻ 새로고침</button>
     </div>
-    <div class="ai-analysis" id="dashboard-analysis"><div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div></div>
     <div style="margin-bottom:16px;">
       <div class="card-title" style="margin-bottom:10px;">🇺🇸 미국 주요 지수</div>
       <div class="grid-4">
@@ -428,7 +436,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
       <div class="hero-sub" id="morning-sub">오늘 시장을 시작하기 전, 놓치면 안 될 핵심만 정리했어요.</div>
       <div class="hero-time" id="morning-time"></div>
     </div>
-    <div class="ai-analysis" id="morning-analysis"><div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div></div>
+    <div class="ai-analysis" id="morning-analysis-wrap">
+    <div class="ai-analysis-header" onclick="toggleAI('morning-analysis')">
+      <span class="ai-analysis-title">⬡ AI 시황 분석</span>
+      <span class="ai-analysis-toggle" id="morning-analysis-toggle">▼</span>
+    </div>
+    <div class="ai-analysis-body" id="morning-analysis">
+      <div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>
+    </div>
+  </div>
     <div class="grid-2" style="margin-bottom:16px;">
       <div class="card morning-card">
         <div class="card-title">🇺🇸 전날 미국 시장 마감</div>
@@ -471,7 +487,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
       <div class="hero-sub">코스피·코스닥 마감 요약 + 특이 이슈</div>
       <div class="hero-time" id="closing-time"></div>
     </div>
-    <div class="ai-analysis" id="closing-analysis"><div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div></div>
+    <div class="ai-analysis" id="closing-analysis-wrap">
+    <div class="ai-analysis-header" onclick="toggleAI('closing-analysis')">
+      <span class="ai-analysis-title">⬡ AI 시황 분석</span>
+      <span class="ai-analysis-toggle" id="closing-analysis-toggle">▼</span>
+    </div>
+    <div class="ai-analysis-body" id="closing-analysis">
+      <div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>
+    </div>
+  </div>
     <div class="grid-2" style="margin-bottom:16px;">
       <div class="card closing-card">
         <div class="card-title">🇰🇷 오늘 국장 마감</div>
@@ -501,7 +525,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
       <div class="hero-sub">장이 쉬는 주말, 이번 주 핵심 이슈와 다음 주 전망</div>
       <div class="hero-time" id="weekend-time"></div>
     </div>
-    <div class="ai-analysis" id="weekend-analysis"><div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div></div>
+    <div class="ai-analysis" id="weekend-analysis-wrap">
+    <div class="ai-analysis-header" onclick="toggleAI('weekend-analysis')">
+      <span class="ai-analysis-title">⬡ AI 시황 분석</span>
+      <span class="ai-analysis-toggle" id="weekend-analysis-toggle">▼</span>
+    </div>
+    <div class="ai-analysis-body" id="weekend-analysis">
+      <div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>
+    </div>
+  </div>
     <div class="grid-2">
       <div class="card weekend-card">
         <div class="card-title">📰 주요 뉴스 &amp; 사설</div>
@@ -560,7 +592,6 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
         <button class="refresh-btn" onclick="loadDartFull()">↻ 새로고침</button>
       </div>
     </div>
-    <div class="ai-analysis" id="dart-analysis"><div class="ai-loading"><div class="ai-dot"></div> AI가 공시를 분석하고 있어요...</div></div>
     <div class="card" id="dart-full-list"><div class="loading-bar skeleton w80"></div><div class="loading-bar skeleton w60"></div></div>
   </div>
 
@@ -798,10 +829,6 @@ async function loadMarket() {
       setChg(chgId, v.change_pct);
     });
   } catch(e) { console.error(e); }
-  // 대시보드 탭이 활성화돼 있을 때만 AI 분석 갱신
-  if (document.getElementById('sec-dashboard').classList.contains('active')) {
-    generateAIAnalysis('dashboard-analysis', 'dashboard');
-  }
 }
 
 // ── DART 로드 ────────────────────────────────────────
@@ -835,7 +862,6 @@ async function loadDartFull() {
     const r = await fetch(BACKEND + '/dart/recent?days=' + days);
     const j = await r.json();
     renderDartList(j.data, 'dart-full-list');
-    generateAIAnalysis('dart-analysis', 'dart');
   } catch(e) {}
 }
 
@@ -867,42 +893,120 @@ async function loadNews(targetId, limit) {
 
 // ── 모닝 브리핑 ──────────────────────────────────────
 
-async function generateAIAnalysis(targetId, type) {
+function toggleAI(id) {
+  const body = document.getElementById(id);
+  const toggle = document.getElementById(id + '-toggle');
+  if (!body) return;
+  body.classList.toggle('collapsed');
+  toggle.classList.toggle('open');
+}
+
+async function generateAIAnalysis(targetId, marketData, newsItems, dartItems, type) {
   const el = document.getElementById(targetId);
   if (!el) return;
-  el.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>';
-  const endpointMap = {
-    morning: '/briefing/morning',
-    closing: '/briefing/closing',
-    weekend: '/briefing/weekend',
-    dashboard: '/ai/dashboard',
-    dart: '/ai/dart'
+  const mkt = marketData || {};
+  const fmt = (k) => { const v = mkt[k]; if (!v) return '-'; const p = Number(v.price).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); const c = v.change_pct != null ? (v.change_pct >= 0 ? '+' : '') + v.change_pct + '%' : ''; return `${p} (${c})`; };
+  const mktSummary = `S&P500: ${fmt('sp500')}, 나스닥: ${fmt('nasdaq')}, 코스피: ${fmt('kospi')}, 코스닥: ${fmt('kosdaq')}, USD/KRW: ${fmt('usdkrw')}, 미10년물: ${fmt('us10y')}%, VIX: ${fmt('vix')}, VKOSPI: ${fmt('vkospi')}, 금: ${fmt('gold')}, 은: ${fmt('silver')}, WTI: ${fmt('wti')}`;
+  const newsSummary = (newsItems||[]).slice(0,8).map(n=>`- ${n.title}`).join('\n') || '없음';
+  const dartSummary = (dartItems||[]).slice(0,5).map(d=>`- [${d.company}] ${d.title}`).join('\n') || '없음';
+  const prompts = {
+    morning: `당신은 Andrew의 전담 투자 어시스턴트입니다. Andrew는 SNU 경영학과 2학년으로, 버핏 가치투자 + 하워드 막스 사이클 이론 + 카너먼 행동경제학을 결합한 'Draft 3.0' 철학을 가진 투자자입니다. 실제 헤지펀드 애널리스트 수준의 날카로운 분석을 원합니다.
+
+[시장 지표]
+${mktSummary}
+
+[주요 뉴스 — 한국 + 글로벌]
+${newsSummary}
+
+[주요 공시]
+${dartSummary}
+
+아래 6개 섹션으로 아침 브리핑을 작성해주세요 (한국어, 각 섹션 3-4문장):
+
+📊 시황 한줄 요약 — 오늘 시장을 한 문장으로 정의. 어제 미장의 핵심 움직임과 그 의미를 구체적 수치와 함께 설명.
+
+🌏 글로벌 매크로 — 미국 금리·달러·국제유가·금 흐름이 오늘 한국시장에 미칠 영향. 특히 원/달러 환율과 외국인 수급 관점에서 분석.
+
+🇰🇷 한국시장 전망 — 코스피·코스닥 예상 흐름. 전날 ADR(등락비율), 주도 섹터, 테마 흐름 관점에서 오늘 주목할 움직임.
+
+🔍 핵심 이슈 분석 — 오늘 가장 중요한 이슈 2가지를 골라 각각 시장 임팩트와 수혜·피해 섹터까지 구체적으로 설명.
+
+⚠️ 리스크 & 센티먼트 — VIX ${mkt.vix?.price || '-'} 기준 현재 시장 공포/탐욕 구간 판단. 조심해야 할 숨겨진 리스크 1가지.
+
+💡 오늘의 Action Point — Draft 3.0 관점에서 오늘 취할 행동(매수 적극/분할매수/관망/회피) 판단과 구체적 주목 섹터·종목 힌트.`,
+
+    closing: `당신은 Andrew의 전담 투자 어시스턴트입니다. Draft 3.0 철학(버핏 가치투자 + 하워드 막스 사이클 + 카너먼 행동경제학) 기반으로 오늘 마감을 분석해주세요.
+
+[마감 지표]
+${mktSummary}
+
+[오늘 뉴스]
+${newsSummary}
+
+[오늘 공시]
+${dartSummary}
+
+아래 6개 섹션으로 마감 브리핑 (한국어, 각 3-4문장):
+
+📊 오늘 국장 총평 — 코스피·코스닥 마감 수치와 의미. 장중 특이 흐름, 주도/낙오 섹터 구체적으로.
+
+💰 수급 분석 — 외국인·기관·개인 수급 흐름 해석. 순매수 상위 업종과 그 의미. 프로그램 매매 동향.
+
+🔍 오늘의 핵심 이슈 — 시장을 움직인 주요 뉴스·이벤트 2가지와 각각의 시장 임팩트 분석.
+
+🌏 내일·이번주 포인트 — 오늘 흐름이 내일 미장 및 이번 주 남은 일정에 시사하는 점. 예정된 경제지표·실적 체크.
+
+⚠️ 리스크 레이더 — 오늘 시장에서 감지된 이상 신호나 주의할 점. 하워드 막스 관점의 사이클 위치.
+
+💡 내일 전략 — Draft 3.0 기준 내일 취할 포지션과 주목할 섹터·종목.`,
+
+    weekend: `당신은 Andrew의 전담 투자 어시스턴트입니다. 이번 주 시장을 총결산하고 다음 주를 준비해주세요.
+
+[이번 주 시장]
+${mktSummary}
+
+[이번 주 주요 뉴스]
+${newsSummary}
+
+[주요 공시]
+${dartSummary}
+
+아래 7개 섹션으로 주간 리포트 (한국어, 각 3-4문장):
+
+📊 이번 주 시장 총평 — 코스피·코스닥·S&P500 주간 등락률과 의미. 주중 가장 중요했던 변곡점.
+
+🌏 글로벌 이슈 리뷰 — 이번 주 글로벌 시장을 움직인 핵심 매크로 이슈 2-3가지와 시장 반응.
+
+💰 주간 수급 리뷰 — 이번 주 외국인·기관 누적 순매수 흐름. 강세 업종과 약세 업종 구분.
+
+🔍 이번 주 베스트 & 워스트 — 가장 주목할 만했던 섹터·종목과 그 이유. 어닝 서프라이즈나 공시 이슈 포함.
+
+📅 다음 주 캘린더 — FOMC·CPI·실적 발표 등 주요 이벤트. 한국 시장에 직접 영향 줄 일정 우선.
+
+⚠️ 다음 주 리스크 — 현재 하워드 막스 사이클 관점의 시장 위치. 주의해야 할 테일 리스크.
+
+💡 주말 숙제 & 다음 주 전략 — Andrew가 주말에 공부할 것 추천. Draft 3.0 기준 다음 주 포지션 방향.`
   };
   try {
-    const resp = await fetch(BACKEND + (endpointMap[type] || '/ai/dashboard'));
+    el.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div> AI가 시황을 분석하고 있어요...</div>';
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: prompts[type] }] })
+    });
     const data = await resp.json();
-    const text = data.ai_analysis || '분석 결과 없음';
-    if (text.startsWith('⚠️')) {
-      el.innerHTML = `<div style="color:var(--text3);font-size:12px;">${text}</div>`;
-      return;
-    }
-    const formatted = text
-      .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--orange)">$1</strong>')
-      .replace(/^#{1,3}\s+(.+)$/gm, '<strong style="color:var(--accent)">$1</strong>')
-      .replace(/^(📊|🔍|⚠️|🌏|📅|💬|🎯|📈|📉|📋|💡)[^\n]*/gm, m => `<span class="ai-label">${m}</span>`)
-      .replace(/\n/g, '<br>');
+    const text = data.content?.[0]?.text || '분석 실패';
+    const formatted = text.replace(/^(📊|🔍|⚠️|🌏|📅|💬)[^\n]*/gm, m => `<span class="ai-label">${m}</span>`).replace(/\n/g, '<br>');
     el.innerHTML = `<div class="ai-analysis-text">${formatted}</div>`;
-  } catch(e) {
-    el.innerHTML = '<div style="color:var(--text3);font-size:12px;">AI 분석 실패: ' + e.message + '</div>';
-  }
+  } catch(e) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;">AI 분석 실패: ' + e.message + '</div>'; }
 }
+
 async function loadMorning() {
   const now = new Date();
   document.getElementById('morning-time').textContent = now.toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
   await loadMarket();
-  await loadNews('morning-news', 8);
+  const newsData = await loadNews('morning-news', 8);
   await loadDart(1);
-  generateAIAnalysis('morning-analysis', 'morning');
+  try { const mktJ = await (await fetch(BACKEND + '/market/overview')).json(); const dartJ = await (await fetch(BACKEND + '/dart/recent?days=1')).json(); generateAIAnalysis('morning-analysis', mktJ.data, newsData, dartJ.data, 'morning'); } catch(e) {}
 }
 
 // ── 마감 브리핑 ──────────────────────────────────────
@@ -910,20 +1014,20 @@ async function loadClosing() {
   const now = new Date();
   document.getElementById('closing-time').textContent = now.toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
   await loadMarket();
-  await loadNews('closing-news', 8);
+  const newsData = await loadNews('closing-news', 8);
   await loadDart(1);
-  generateAIAnalysis('closing-analysis', 'closing');
+  try { const mktJ = await (await fetch(BACKEND + '/market/overview')).json(); const dartJ = await (await fetch(BACKEND + '/dart/recent?days=1')).json(); generateAIAnalysis('closing-analysis', mktJ.data, newsData, dartJ.data, 'closing'); } catch(e) {}
 }
 
 // ── 주말 브리핑 ──────────────────────────────────────
 async function loadWeekend() {
   const now = new Date();
   document.getElementById('weekend-time').textContent = now.toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
-  await loadNews('weekend-news', 12);
+  const newsData = await loadNews('weekend-news', 12);
   const r = await fetch(BACKEND + '/dart/recent?days=7').catch(()=>({json:()=>({data:[]})}));
   const j = await r.json();
   renderDartList(j.data, 'weekend-dart');
-  generateAIAnalysis('weekend-analysis', 'weekend');
+  try { const mktJ = await (await fetch(BACKEND + '/market/overview')).json(); generateAIAnalysis('weekend-analysis', mktJ.data, newsData, j.data, 'weekend'); } catch(e) {}
 }
 
 // ── 바이어스 체크 ─────────────────────────────────────
@@ -1660,10 +1764,6 @@ switchTab = function(name, el) {
     if (screenerCache.us.length === 0) loadScreener('us');
     else { renderScreenerCards(screenerCache.us, 'us'); loadScreener('us'); }
   }
-  if (name === 'dart') loadDartFull();
-  if (name === 'morning') loadMorning();
-  if (name === 'closing') loadClosing();
-  if (name === 'weekend') loadWeekend();
 };
 
 (async function init() {
